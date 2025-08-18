@@ -1,6 +1,43 @@
 <template>
   <div class="app-container home">
     <el-row :gutter="20">
+      <el-col :sm="24" :lg="24">
+        <blockquote class="text-warning" style="font-size: 14px">
+          领取阿里云通用云产品1888优惠券
+          <br />
+          <el-link
+            href="https://www.aliyun.com/minisite/goods?userCode=brki8iof"
+            type="primary"
+            target="_blank"
+            >https://www.aliyun.com/minisite/goods?userCode=brki8iof</el-link
+          >
+          <br />
+          领取腾讯云通用云产品2860优惠券
+          <br />
+          <el-link
+            href="https://cloud.tencent.com/redirect.php?redirect=1025&cps_key=198c8df2ed259157187173bc7f4f32fd&from=console"
+            type="primary"
+            target="_blank"
+            >https://cloud.tencent.com/redirect.php?redirect=1025&cps_key=198c8df2ed259157187173bc7f4f32fd&from=console</el-link
+          >
+          <br />
+          阿里云服务器折扣区
+          <el-link href="http://aly.ruoyi.vip" type="primary" target="_blank"
+            >>☛☛点我进入☚☚</el-link
+          >
+          &nbsp;&nbsp;&nbsp; 腾讯云服务器秒杀区
+          <el-link href="http://txy.ruoyi.vip" type="primary" target="_blank"
+            >>☛☛点我进入☚☚</el-link
+          ><br />
+          <h4 class="text-danger">
+            云产品通用红包，可叠加官网常规优惠使用。(仅限新用户)
+          </h4>
+        </blockquote>
+
+        <hr />
+      </el-col>
+    </el-row>
+    <el-row :gutter="20">
       <el-col :sm="24" :lg="12" style="padding-left: 20px">
         <h2>若依后台管理框架</h2>
         <p>
@@ -85,9 +122,7 @@
               <s> 满180251782 </s> <s> 满104180207 </s> <s> 满186866453 </s> <s> 满201396349 </s>
               <s> 满101456076 </s> <s> 满101539465 </s> <s> 满264312783 </s> <s> 满167385320 </s> 
               <s> 满104748341 </s> <s> 满160110482 </s> <s> 满170801498 </s> <s> 满108482800 </s> 
-              <s> 满101046199 </s> <s> 满136919097 </s> <s> 满143961921 </s> <s> 满174951577 </s> 
-              <s> 满161281055 </s> <s> 满138988063 </s> <s> 满151450850 </s> <s> 满224622315 </s>
-              <s> 满287842588 </s> <s> 满187944233 </s> <s> 满228578329 </s> <a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=GsOo-OLz53J8y_9TPoO6XXSGNRTgbFxA&authKey=R7Uy%2Feq%2BZsoKNqHvRKhiXpypW7DAogoWapOawUGHokJSBIBIre2%2FoiAZeZBSLuBc&noverify=0&group_code=191164766" target="_blank">191164766</a>
+              <s> 满101046199 </s> <s> 满136919097 </s> <s> 满143961921 </s> <s> 满174951577 </s> <a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Lj0nHRAPD5CZv1jTOciuxXVloBJLS2Lp&authKey=Q2RxC6%2Ffxney9yOGBY0sDJxFhX9b7o1FRY1bsESmkbcZ4PFt6Vx92FpVo9O1u9p4&noverify=0&group_code=161281055" target="_blank">161281055</a>
             </p>
             <p>
               <i class="el-icon-chat-dot-round"></i> 微信：<a
@@ -113,111 +148,6 @@
             </div>
           </template>
           <el-collapse accordion>
-            <el-collapse-item title="v3.9.0 - 2025-05-28">
-              <ol>
-                <li>优化菜单搜索查询页</li>
-                <li>导航栏显示昵称&设置</li>
-                <li>菜单管理新增路由名称</li>
-                <li>添加底部版权信息&开关</li>
-                <li>分配角色禁用不允许勾选</li>
-                <li>Excel导入导出支持多图片</li>
-                <li>添加页签图标显示开关功能</li>
-                <li>上传组件新增拖动排序属性</li>
-                <li>显隐列组件支持全选/全不选</li>
-                <li>初始密码支持自定义修改策略</li>
-                <li>账号密码支持自定义更新周期</li>
-                <li>代码生成列表支持按时间排序</li>
-                <li>支持富文本复制粘贴图片上传至url</li>
-                <li>支持文件&图片组件自定义地址&参数</li>
-                <li>升级tomcat到最新版本9.0.105</li>
-                <li>升级oshi到最新版本6.8.1</li>
-                <li>升级fastjson到最新版2.0.57</li>
-                <li>升级commons.io到最新版本2.19.0</li>
-                <li>package.json移除runjs依赖</li>
-                <li>package.json移除eslint依赖</li>
-                <li>package.json移除vue-meta依赖</li>
-                <li>修复代码生成主子表校验必填失效问题</li>
-                <li>优化前端树结构性能问题</li>
-                <li>优化前端处理路由函数代码</li>
-                <li>优化文件上传组件新增类型</li>
-                <li>优化顶部菜单搜索栏为多层级显示</li>
-                <li>优化文件&图片上传组件新增disabled属性</li>
-                <li>优化空指针异常时无法获取错误信息问题</li>
-                <li>优化定时任务字符包含多个括号导致数据错误</li>
-                <li>优化登录&注册页表头使用VUE_APP_TITLE配置值</li>
-                <li>优化导出Excel日期格式双击离开后与设定的格式不一致问题</li>
-                <li>其他细节优化</li>
-              </ol>
-            </el-collapse-item>
-            <el-collapse-item title="v3.8.9 - 2024-12-30">
-              <ol>
-                <li>用户管理支持分栏拖动</li>
-                <li>修改主题样式本地读取</li>
-                <li>用户头像http(s)链接支持</li>
-                <li>用户管理过滤掉已禁用部门</li>
-                <li>支持自定义显示Excel属性列</li>
-                <li>操作日志记录DELETE请求参数</li>
-                <li>白名单支持对通配符路径匹配</li>
-                <li>校检文件名是否包含特殊字符</li>
-                <li>代码生成创建表屏蔽违规的字符</li>
-                <li>菜单面包屑导航支持多层级显示</li>
-                <li>Excel注解支持wrapText是否允许内容换行</li>
-                <li>代码生成新增配置是否允许文件覆盖到本地</li>
-                <li>修复角色禁用权限不失效问题</li>
-                <li>修复代码生成上级菜单显示问题</li>
-                <li>修复导出子列表对象只能在最后的问题</li>
-                <li>修复TopNav无法正确获取active的问题</li>
-                <li>修复默认关闭Tags-Views内链页面打不开</li>
-                <li>升级oshi到最新版本6.6.5</li>
-                <li>升级tomcat到最新版本9.0.96</li>
-                <li>升级fastjson到最新版2.0.53</li>
-                <li>升级logback到最新版本1.2.13</li>
-                <li>升级spring-framework到最新版本5.3.39</li>
-                <li>升级quill到最新版本2.0.2</li>
-                <li>升级axios到最新版本0.28.1</li>
-                <li>优化身份证脱敏正则</li>
-                <li>优化权限更新后同步缓存</li>
-                <li>优化查询时间范围日期格式</li>
-                <li>优化参数键值更换为多行文本</li>
-                <li>优化导入带标题文件关闭清理</li>
-                <li>优化上传图片带域名不增加前缀</li>
-                <li>优化特殊字符密码修改失败问题</li>
-                <li>优化无用户编号不校验数据权限</li>
-                <li>优化TopNav内链菜单点击没有高亮</li>
-                <li>优化菜单管理切换Mini布局错乱问题</li>
-                <li>其他细节优化</li>
-              </ol>
-            </el-collapse-item>
-            <el-collapse-item title="v3.8.8 - 2024-06-30">
-              <ol>
-                <li>菜单管理新增路由名称</li>
-                <li>新增数据脱敏过滤注解</li>
-                <li>用户密码新增非法字符验证</li>
-                <li>限制用户操作数据权限范围</li>
-                <li>代码生成新增创建表结构功能</li>
-                <li>定时任务白名单配置范围缩小</li>
-                <li>优化代码生成主子表关联查询方式</li>
-                <li>Excel注解新增属性comboReadDict</li>
-                <li>Excel注解ColumnType类型新增文本</li>
-                <li>新增国际化资源文件配置</li>
-                <li>升级oshi到最新版本6.6.1</li>
-                <li>升级druid到最新版本1.2.23</li>
-                <li>升级core-js到最新版本3.37.1</li>
-                <li>更新HttpUtils中的User-Agent</li>
-                <li>更新compressionPlugin到6.1.2以兼容node18+</li>
-                <li>升级spring-security到安全版本，防止漏洞风险</li>
-                <li>升级spring-framework到安全版本，防止漏洞风险</li>
-                <li>优化自定义XSS注解匹配方式</li>
-                <li>优化缓存监控键名列表排序显示</li>
-                <li>优化定时任务日志默认按时间排序</li>
-                <li>优化默认文件大小超过2G无效的问题</li>
-                <li>优化查表特殊字符使用反斜杠进行转义</li>
-                <li>优化定时任务cron表达式小时配置显示错误问题</li>
-                <li>优化多个自定数据权限使用in查询,避免多次拼接</li>
-                <li>优化导入Excel时设置dictType属性重复查缓存问题</li>
-                <li>其他细节优化</li>
-              </ol>
-            </el-collapse-item>
             <el-collapse-item title="v3.8.7 - 2023-12-08">
               <ol>
                 <li>操作日志记录部门名称</li>
@@ -1058,7 +988,7 @@
 </template>
 
 <script setup name="Index">
-const version = ref('3.9.0')
+const version = ref('3.8.7')
 
 function goTarget(url) {
   window.open(url, '__blank')

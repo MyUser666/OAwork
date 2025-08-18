@@ -3,12 +3,10 @@ export default {
    * 网页标题
    */
   title: import.meta.env.VITE_APP_TITLE,
-
   /**
    * 侧边栏主题 深色主题theme-dark，浅色主题theme-light
    */
   sideTheme: 'theme-dark',
-
   /**
    * 是否系统布局配置
    */
@@ -23,11 +21,6 @@ export default {
    * 是否显示 tagsView
    */
   tagsView: true,
-  
-  /**
-   * 显示页签图标
-   */
-  tagsIcon: false,
 
   /**
    * 是否固定头部
@@ -45,13 +38,10 @@ export default {
   dynamicTitle: false,
 
   /**
-   * 是否显示底部版权
+   * @type {string | array} 'production' | ['production', 'development']
+   * @description Need show err logs component.
+   * The default is only used in the production env
+   * If you want to also use it in dev, you can pass ['production', 'development']
    */
-  footerVisible: false,
-
-  /**
-   * 底部版权文本内容
-   */
-  footerContent: 'Copyright © 2018-2025 RuoYi. All Rights Reserved.'
+  errorLog: 'production'
 }
-

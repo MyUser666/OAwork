@@ -78,8 +78,8 @@
               <el-icon><question-filled /></el-icon>
             </el-tooltip>
           </template>
-          <el-radio v-model="info.genType" value="0">zip压缩包</el-radio>
-          <el-radio v-model="info.genType" value="1">自定义路径</el-radio>
+          <el-radio v-model="info.genType" label="0">zip压缩包</el-radio>
+          <el-radio v-model="info.genType" label="1">自定义路径</el-radio>
         </el-form-item>
       </el-col>
 
@@ -91,13 +91,11 @@
               <el-icon><question-filled /></el-icon>
             </el-tooltip>
           </template>
-          <el-tree-select
-            v-model="info.parentMenuId"
-            :data="menuOptions"
-            :props="{ value: 'menuId', label: 'menuName', children: 'children' }"
-            value-key="menuId"
+          <tree-select
+            v-model:value="info.parentMenuId"
+            :options="menuOptions"
+            :objMap="{ value: 'menuId', label: 'menuName', children: 'children' }"
             placeholder="请选择系统菜单"
-            check-strictly
           />
         </el-form-item>
       </el-col>
@@ -235,11 +233,11 @@
 </template>
 
 <script setup>
-import { listMenu } from "@/api/system/menu"
+import { listMenu } from "@/api/system/menu";
 
-const subColumns = ref([])
-const menuOptions = ref([])
-const { proxy } = getCurrentInstance()
+const subColumns = ref([]);
+const menuOptions = ref([]);
+const { proxy } = getCurrentInstance();
 
 const props = defineProps({
   info: {
@@ -250,7 +248,7 @@ const props = defineProps({
     type: Array,
     default: null
   }
-})
+});
 
 // 表单校验
 const rules = ref({
@@ -259,47 +257,41 @@ const rules = ref({
   moduleName: [{ required: true, message: "请输入生成模块名", trigger: "blur" }],
   businessName: [{ required: true, message: "请输入生成业务名", trigger: "blur" }],
   functionName: [{ required: true, message: "请输入生成功能名", trigger: "blur" }]
-})
-
+});
 function subSelectChange(value) {
-  props.info.subTableFkName = ""
+  props.info.subTableFkName = "";
 }
-
 function tplSelectChange(value) {
   if (value !== "sub") {
-    props.info.subTableName = ""
-    props.info.subTableFkName = ""
+    props.info.subTableName = "";
+    props.info.subTableFkName = "";
   }
 }
-
 function setSubTableColumns(value) {
   for (var item in props.tables) {
-    const name = props.tables[item].tableName
+    const name = props.tables[item].tableName;
     if (value === name) {
-      subColumns.value = props.tables[item].columns
-      break
+      subColumns.value = props.tables[item].columns;
+      break;
     }
   }
 }
-
 /** 查询菜单下拉树结构 */
 function getMenuTreeselect() {
   listMenu().then(response => {
-    menuOptions.value = proxy.handleTree(response.data, "menuId")
-  })
+    menuOptions.value = proxy.handleTree(response.data, "menuId");
+  });
 }
 
-onMounted(() => {
-  getMenuTreeselect()
-})
-
 watch(() => props.info.subTableName, val => {
-  setSubTableColumns(val)
-})
+  setSubTableColumns(val);
+});
 
 watch(() => props.info.tplWebType, val => {
   if (val === '') {
-    props.info.tplWebType = "element-plus"
+    props.info.tplWebType = "element-plus";
   }
-})
+});
+
+getMenuTreeselect();
 </script>

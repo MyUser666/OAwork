@@ -8,31 +8,14 @@
       </transition>
     </router-view>
     <iframe-toggle />
-    <copyright />
   </section>
 </template>
 
 <script setup>
-import copyright from "./Copyright/index"
 import iframeToggle from "./IframeToggle/index"
 import useTagsViewStore from '@/store/modules/tagsView'
 
-const route = useRoute()
 const tagsViewStore = useTagsViewStore()
-
-onMounted(() => {
-  addIframe()
-})
-
-watchEffect(() => {
-  addIframe()
-})
-
-function addIframe() {
-  if (route.meta.link) {
-    useTagsViewStore().addIframeView(route)
-  }
-}
 </script>
 
 <style lang="scss" scoped>
@@ -42,10 +25,6 @@ function addIframe() {
   width: 100%;
   position: relative;
   overflow: hidden;
-}
-
-.app-main:has(.copyright) {
-  padding-bottom: 36px;
 }
 
 .fixed-header + .app-main {
