@@ -22,7 +22,7 @@
        version: 当前项目版本号，与父项目保持一致
    -->
     <groupId>com.intoa</groupId>
-    <artifactId>intoa-negotroom</artifactId>
+    <artifactId>intoa-negotiate</artifactId>
     <version>3.9.0</version>
 
     <properties>

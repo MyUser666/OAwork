@@ -188,7 +188,7 @@
             <!-- 洽谈室-->
             <dependency>
                 <groupId>com.intoa</groupId>
-                <artifactId>intoa-negotroom</artifactId>
+                <artifactId>intoa-negotiate</artifactId>
                 <version>${intoa.version}</version>
             </dependency>
 
@@ -202,8 +202,7 @@
         <module>intoa-quartz</module>
         <module>intoa-generator</module>
         <module>intoa-common</module>
-        <module>intoa-negotroom</module>
-        <module>untitled</module>
+        <module>intoa-negotiate</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -57,7 +57,7 @@
         <!-- 洽谈室-->
         <dependency>
             <groupId>com.intoa</groupId>
-            <artifactId>intoa-negotroom</artifactId>
+            <artifactId>intoa-negotiate</artifactId>
         </dependency>
 
     </dependencies>
