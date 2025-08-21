@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.intoa.negotiate.mapper.NegLogMapper">
+    
+    <resultMap type="NegLog" id="NegLogResult">
+        <result property="logId"    column="log_id"    />
+        <result property="title"    column="title"    />
+        <result property="roomId"    column="room_id"    />
+        <result property="roomName"    column="room_name"    />
+        <result property="userId"    column="user_id"    />
+        <result property="roleId"    column="role_id"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="clientName"    column="client_name"    />
+        <result property="clientContact"    column="client_contact"    />
+        <result property="caseReference"    column="case_reference"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <resultMap id="NegLogNegLogTeaResult" type="NegLog" extends="NegLogResult">
+        <collection property="negLogTeaList" ofType="NegLogTea" column="log_id" select="selectNegLogTeaList" />
+    </resultMap>
+
+    <resultMap type="NegLogTea" id="NegLogTeaResult">
+        <result property="logTeaId"    column="log_tea_id"    />
+        <result property="logId"    column="log_id"    />
+        <result property="teaId"    column="tea_id"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectNegLogVo">
+        select log_id, title, room_id, room_name, user_id, role_id, nick_name, client_name, client_contact, case_reference, start_time, end_time, status, create_by, create_time, update_by, update_time, remark from oa_neg_log
+    </sql>
+
+    <select id="selectNegLogList" parameterType="NegLog" resultMap="NegLogResult">
+        <include refid="selectNegLogVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
+            <if test="roomName != null  and roomName != ''"> and room_name like concat('%', #{roomName}, '%')</if>
+            <if test="nickName != null  and nickName != ''"> and nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="clientName != null  and clientName != ''"> and client_name like concat('%', #{clientName}, '%')</if>
+            <if test="caseReference != null  and caseReference != ''"> and case_reference = #{caseReference}</if>
+            <if test="params.beginStartTime != null and params.beginStartTime != '' and params.endStartTime != null and params.endStartTime != ''"> and start_time between #{params.beginStartTime} and #{params.endStartTime}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+        </where>
+    </select>
+    
+    <select id="selectNegLogByLogId" parameterType="Long" resultMap="NegLogNegLogTeaResult">
+        select log_id, title, room_id, room_name, user_id, role_id, nick_name, client_name, client_contact, case_reference, start_time, end_time, status, create_by, create_time, update_by, update_time, remark
+        from oa_neg_log
+        where log_id = #{logId}
+    </select>
+
+    <select id="selectNegLogTeaList" resultMap="NegLogTeaResult">
+        select log_tea_id, log_id, tea_id, quantity, create_by, create_time, update_by, update_time, remark
+        from oa_neg_log_tea
+        where log_id = #{log_id}
+    </select>
+
+    <insert id="insertNegLog" parameterType="NegLog" useGeneratedKeys="true" keyProperty="logId">
+        insert into oa_neg_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">title,</if>
+            <if test="roomId != null">room_id,</if>
+            <if test="roomName != null and roomName != ''">room_name,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="roleId != null">role_id,</if>
+            <if test="nickName != null and nickName != ''">nick_name,</if>
+            <if test="clientName != null and clientName != ''">client_name,</if>
+            <if test="clientContact != null">client_contact,</if>
+            <if test="caseReference != null">case_reference,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="roomId != null">#{roomId},</if>
+            <if test="roomName != null and roomName != ''">#{roomName},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="roleId != null">#{roleId},</if>
+            <if test="nickName != null and nickName != ''">#{nickName},</if>
+            <if test="clientName != null and clientName != ''">#{clientName},</if>
+            <if test="clientContact != null">#{clientContact},</if>
+            <if test="caseReference != null">#{caseReference},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateNegLog" parameterType="NegLog">
+        update oa_neg_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="roomId != null">room_id = #{roomId},</if>
+            <if test="roomName != null and roomName != ''">room_name = #{roomName},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="roleId != null">role_id = #{roleId},</if>
+            <if test="nickName != null and nickName != ''">nick_name = #{nickName},</if>
+            <if test="clientName != null and clientName != ''">client_name = #{clientName},</if>
+            <if test="clientContact != null">client_contact = #{clientContact},</if>
+            <if test="caseReference != null">case_reference = #{caseReference},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where log_id = #{logId}
+    </update>
+
+    <delete id="deleteNegLogByLogId" parameterType="Long">
+        delete from oa_neg_log where log_id = #{logId}
+    </delete>
+
+    <delete id="deleteNegLogByLogIds" parameterType="String">
+        delete from oa_neg_log where log_id in 
+        <foreach item="logId" collection="array" open="(" separator="," close=")">
+            #{logId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteNegLogTeaByLogIds" parameterType="String">
+        delete from oa_neg_log_tea where log_id in 
+        <foreach item="logId" collection="array" open="(" separator="," close=")">
+            #{logId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteNegLogTeaByLogId" parameterType="Long">
+        delete from oa_neg_log_tea where log_id = #{logId}
+    </delete>
+
+    <insert id="batchNegLogTea">
+        insert into oa_neg_log_tea( log_tea_id, log_id, tea_id, quantity, create_by, create_time, update_by, update_time, remark) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.logTeaId}, #{item.logId}, #{item.teaId}, #{item.quantity}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
+        </foreach>
+    </insert>
+</mapper>
