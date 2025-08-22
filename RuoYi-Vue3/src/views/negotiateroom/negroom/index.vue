@@ -20,7 +20,7 @@
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
           <el-option
-            v-for="dict in oa_neg_status"
+            v-for="dict in oa_status"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -85,7 +85,7 @@
       <el-table-column label="缓冲时间" align="center" prop="bufferTime" />
       <el-table-column label="状态" align="center" prop="status">
         <template #default="scope">
-          <dict-tag :options="oa_neg_status" :value="scope.row.status"/>
+          <dict-tag :options="oa_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
       <el-table-column label="创建者" align="center" prop="createBy" />
@@ -139,7 +139,7 @@
         <el-form-item label="状态" prop="status">
           <el-select v-model="form.status" placeholder="请选择状态">
             <el-option
-              v-for="dict in oa_neg_status"
+              v-for="dict in oa_status"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
@@ -164,7 +164,7 @@
 import { listNegroom, getNegroom, delNegroom, addNegroom, updateNegroom } from "@/api/negotiateroom/negroom"
 
 const { proxy } = getCurrentInstance()
-const { oa_neg_status } = proxy.useDict('oa_neg_status')
+const { oa_status } = proxy.useDict('oa_status')
 
 const negroomList = ref([])
 const open = ref(false)

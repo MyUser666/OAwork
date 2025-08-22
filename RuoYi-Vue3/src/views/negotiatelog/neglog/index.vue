@@ -44,7 +44,9 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="状态" prop="status">
+        <!-- 状态选择下拉框，绑定queryParams.status用于查询条件 -->
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+          <!-- 遍历oa_neg_log_status数据字典，生成状态选项 -->
           <el-option
             v-for="dict in oa_neg_log_status"
             :key="dict.value"

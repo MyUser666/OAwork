@@ -10,19 +10,19 @@ import com.intoa.negotiate.service.INegTeaService;
 
 /**
  * 茶水管理Service业务层处理
- * 
+ *
  * @author beihai
- * @date 2025-08-21
+ * @date 2025-08-22
  */
 @Service
-public class NegTeaServiceImpl implements INegTeaService 
+public class NegTeaServiceImpl implements INegTeaService
 {
     @Autowired
     private NegTeaMapper negTeaMapper;
 
     /**
      * 查询茶水管理
-     * 
+     *
      * @param teaId 茶水管理主键
      * @return 茶水管理
      */
@@ -34,7 +34,7 @@ public class NegTeaServiceImpl implements INegTeaService
 
     /**
      * 查询茶水管理列表
-     * 
+     *
      * @param negTea 茶水管理
      * @return 茶水管理
      */
@@ -46,7 +46,7 @@ public class NegTeaServiceImpl implements INegTeaService
 
     /**
      * 新增茶水管理
-     * 
+     *
      * @param negTea 茶水管理
      * @return 结果
      */
@@ -59,7 +59,7 @@ public class NegTeaServiceImpl implements INegTeaService
 
     /**
      * 修改茶水管理
-     * 
+     *
      * @param negTea 茶水管理
      * @return 结果
      */
@@ -72,7 +72,7 @@ public class NegTeaServiceImpl implements INegTeaService
 
     /**
      * 批量删除茶水管理
-     * 
+     *
      * @param teaIds 需要删除的茶水管理主键
      * @return 结果
      */
@@ -84,7 +84,7 @@ public class NegTeaServiceImpl implements INegTeaService
 
     /**
      * 删除茶水管理信息
-     * 
+     *
      * @param teaId 茶水管理主键
      * @return 结果
      */

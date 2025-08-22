@@ -38,8 +38,8 @@ public class NegRoom extends BaseEntity
     @Excel(name = "缓冲时间", readConverterExp = "分=钟")
     private Long bufferTime;
 
-    /** 状态 */
-    @Excel(name = "状态")
+    /** 状态 （0=可用,1=禁用）*/
+    @Excel(name = "状态",readConverterExp = "0=可用,1=禁用")
     private String status;
 
     /** 显示顺序 */

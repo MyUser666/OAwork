@@ -23,9 +23,9 @@ import com.intoa.common.core.page.TableDataInfo;
 
 /**
  * 茶水管理Controller
- * 
+ *
  * @author beihai
- * @date 2025-08-21
+ * @date 2025-08-22
  */
 @RestController
 @RequestMapping("/negotiatetea/negtea")
@@ -96,7 +96,7 @@ public class NegTeaController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('negotiatetea:negtea:remove')")
     @Log(title = "茶水管理", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{teaIds}")
+    @DeleteMapping("/{teaIds}")
     public AjaxResult remove(@PathVariable Long[] teaIds)
     {
         return toAjax(negTeaService.deleteNegTeaByTeaIds(teaIds));

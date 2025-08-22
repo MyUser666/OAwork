@@ -7,7 +7,7 @@ import com.intoa.common.core.domain.BaseEntity;
 
 /**
  * 茶水管理对象 oa_neg_tea
- * 
+ *
  * @author beihai
  * @date 2025-08-21
  */
@@ -33,52 +33,52 @@ public class NegTea extends BaseEntity
     @Excel(name = "状态", readConverterExp = "0=可用,1=缺货")
     private String status;
 
-    public void setTeaId(Long teaId) 
+    public void setTeaId(Long teaId)
     {
         this.teaId = teaId;
     }
 
-    public Long getTeaId() 
+    public Long getTeaId()
     {
         return teaId;
     }
 
-    public void setTeaName(String teaName) 
+    public void setTeaName(String teaName)
     {
         this.teaName = teaName;
     }
 
-    public String getTeaName() 
+    public String getTeaName()
     {
         return teaName;
     }
 
-    public void setCategory(String category) 
+    public void setCategory(String category)
     {
         this.category = category;
     }
 
-    public String getCategory() 
+    public String getCategory()
     {
         return category;
     }
 
-    public void setStockQuantity(Long stockQuantity) 
+    public void setStockQuantity(Long stockQuantity)
     {
         this.stockQuantity = stockQuantity;
     }
 
-    public Long getStockQuantity() 
+    public Long getStockQuantity()
     {
         return stockQuantity;
     }
 
-    public void setStatus(String status) 
+    public void setStatus(String status)
     {
         this.status = status;
     }
 
-    public String getStatus() 
+    public String getStatus()
     {
         return status;
     }

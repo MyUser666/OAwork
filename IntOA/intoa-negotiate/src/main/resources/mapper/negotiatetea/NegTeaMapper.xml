@@ -25,6 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectNegTeaVo"/>
         <where>  
             <if test="teaName != null  and teaName != ''"> and tea_name like concat('%', #{teaName}, '%')</if>
+            <if test="category != null  and category != ''"> and category = #{category}</if>
             <if test="stockQuantity != null "> and stock_quantity = #{stockQuantity}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
         </where>
