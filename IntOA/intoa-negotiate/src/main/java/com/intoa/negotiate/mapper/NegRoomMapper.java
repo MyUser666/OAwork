@@ -2,18 +2,20 @@ package com.intoa.negotiate.mapper;
 
 import java.util.List;
 import com.intoa.negotiate.domain.NegRoom;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 洽谈室管理Mapper接口
- * 
+ *
  * @author beihai
- * @date 2025-08-21
+ * @date 2025-08-29
  */
-public interface NegRoomMapper 
+@Mapper
+public interface NegRoomMapper
 {
     /**
      * 查询洽谈室管理
-     * 
+     *
      * @param roomId 洽谈室管理主键
      * @return 洽谈室管理
      */
@@ -21,7 +23,7 @@ public interface NegRoomMapper
 
     /**
      * 查询洽谈室管理列表
-     * 
+     *
      * @param negRoom 洽谈室管理
      * @return 洽谈室管理集合
      */
@@ -29,7 +31,7 @@ public interface NegRoomMapper
 
     /**
      * 新增洽谈室管理
-     * 
+     *
      * @param negRoom 洽谈室管理
      * @return 结果
      */
@@ -37,7 +39,7 @@ public interface NegRoomMapper
 
     /**
      * 修改洽谈室管理
-     * 
+     *
      * @param negRoom 洽谈室管理
      * @return 结果
      */
@@ -45,7 +47,7 @@ public interface NegRoomMapper
 
     /**
      * 删除洽谈室管理
-     * 
+     *
      * @param roomId 洽谈室管理主键
      * @return 结果
      */
@@ -53,7 +55,7 @@ public interface NegRoomMapper
 
     /**
      * 批量删除洽谈室管理
-     * 
+     *
      * @param roomIds 需要删除的数据主键集合
      * @return 结果
      */

@@ -7,9 +7,9 @@ import com.intoa.common.core.domain.BaseEntity;
 
 /**
  * 洽谈室管理对象 oa_neg_room
- * 
+ *
  * @author beihai
- * @date 2025-08-21
+ * @date 2025-08-29
  */
 public class NegRoom extends BaseEntity
 {
@@ -38,90 +38,90 @@ public class NegRoom extends BaseEntity
     @Excel(name = "缓冲时间", readConverterExp = "分=钟")
     private Long bufferTime;
 
-    /** 状态 （0=可用,1=禁用）*/
-    @Excel(name = "状态",readConverterExp = "0=可用,1=禁用")
+    /** 状态（0可用 1使用中 2禁用） */
+    @Excel(name = "状态", readConverterExp = "0=可用,1=使用中,2=禁用")
     private String status;
 
     /** 显示顺序 */
     @Excel(name = "显示顺序")
     private Long orderNum;
 
-    public void setRoomId(Long roomId) 
+    public void setRoomId(Long roomId)
     {
         this.roomId = roomId;
     }
 
-    public Long getRoomId() 
+    public Long getRoomId()
     {
         return roomId;
     }
 
-    public void setRoomName(String roomName) 
+    public void setRoomName(String roomName)
     {
         this.roomName = roomName;
     }
 
-    public String getRoomName() 
+    public String getRoomName()
     {
         return roomName;
     }
 
-    public void setLocation(String location) 
+    public void setLocation(String location)
     {
         this.location = location;
     }
 
-    public String getLocation() 
+    public String getLocation()
     {
         return location;
     }
 
-    public void setCapacity(Long capacity) 
+    public void setCapacity(Long capacity)
     {
         this.capacity = capacity;
     }
 
-    public Long getCapacity() 
+    public Long getCapacity()
     {
         return capacity;
     }
 
-    public void setEquipment(String equipment) 
+    public void setEquipment(String equipment)
     {
         this.equipment = equipment;
     }
 
-    public String getEquipment() 
+    public String getEquipment()
     {
         return equipment;
     }
 
-    public void setBufferTime(Long bufferTime) 
+    public void setBufferTime(Long bufferTime)
     {
         this.bufferTime = bufferTime;
     }
 
-    public Long getBufferTime() 
+    public Long getBufferTime()
     {
         return bufferTime;
     }
 
-    public void setStatus(String status) 
+    public void setStatus(String status)
     {
         this.status = status;
     }
 
-    public String getStatus() 
+    public String getStatus()
     {
         return status;
     }
 
-    public void setOrderNum(Long orderNum) 
+    public void setOrderNum(Long orderNum)
     {
         this.orderNum = orderNum;
     }
 
-    public Long getOrderNum() 
+    public Long getOrderNum()
     {
         return orderNum;
     }
@@ -129,19 +129,19 @@ public class NegRoom extends BaseEntity
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("roomId", getRoomId())
-            .append("roomName", getRoomName())
-            .append("location", getLocation())
-            .append("capacity", getCapacity())
-            .append("equipment", getEquipment())
-            .append("bufferTime", getBufferTime())
-            .append("status", getStatus())
-            .append("createBy", getCreateBy())
-            .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
-            .append("orderNum", getOrderNum())
-            .append("remark", getRemark())
-            .toString();
+                .append("roomId", getRoomId())
+                .append("roomName", getRoomName())
+                .append("location", getLocation())
+                .append("capacity", getCapacity())
+                .append("equipment", getEquipment())
+                .append("bufferTime", getBufferTime())
+                .append("status", getStatus())
+                .append("orderNum", getOrderNum())
+                .append("createBy", getCreateBy())
+                .append("createTime", getCreateTime())
+                .append("updateBy", getUpdateBy())
+                .append("updateTime", getUpdateTime())
+                .append("remark", getRemark())
+                .toString();
     }
 }

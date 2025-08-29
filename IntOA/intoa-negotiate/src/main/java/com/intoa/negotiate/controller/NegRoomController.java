@@ -23,9 +23,9 @@ import com.intoa.common.core.page.TableDataInfo;
 
 /**
  * 洽谈室管理Controller
- * 
+ *
  * @author beihai
- * @date 2025-08-21
+ * @date 2025-08-29
  */
 @RestController
 @RequestMapping("/negotiateroom/negroom")
@@ -96,7 +96,7 @@ public class NegRoomController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('negotiateroom:negroom:remove')")
     @Log(title = "洽谈室管理", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{roomIds}")
+    @DeleteMapping("/{roomIds}")
     public AjaxResult remove(@PathVariable Long[] roomIds)
     {
         return toAjax(negRoomService.deleteNegRoomByRoomIds(roomIds));
