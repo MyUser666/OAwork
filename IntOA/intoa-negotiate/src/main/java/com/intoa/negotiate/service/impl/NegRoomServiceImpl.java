@@ -60,18 +60,13 @@ public class NegRoomServiceImpl implements INegRoomService
     public int insertNegRoom(NegRoom negRoom)
     {
         negRoom.setCreateTime(DateUtils.getNowDate());
-        // 设置roomId与roomName相同
-        if (negRoom.getRoomId() == null && negRoom.getRoomName() != null) {
-            // roomId、roomName和dict_value保持一致
-            negRoom.setRoomId(Long.valueOf(negRoom.getRoomName()));
-        }
         int result = negRoomMapper.insertNegRoom(negRoom);
         if (result > 0) {
-            // 同步添加到数据字典，roomId、roomName和dict_value保持一致
+            // 同步添加到数据字典，roomId=dict_value，roomName=dict_label
             SysDictData dictData = new SysDictData();
-            dictData.setDictLabel(negRoom.getRoomName());
+            dictData.setDictLabel(negRoom.getRoomName()); // roomName作为dict_label
             dictData.setDictType("oa_negroom_name");
-            dictData.setDictValue(negRoom.getRoomName()); // dict_value与roomName一致
+            dictData.setDictValue(String.valueOf(negRoom.getRoomId())); // roomId作为dict_value
             dictData.setStatus(UserConstants.DICT_NORMAL);
             dictData.setDictSort(0L);
             dictData.setIsDefault(UserConstants.YES);
@@ -91,22 +86,17 @@ public class NegRoomServiceImpl implements INegRoomService
     {
         NegRoom oldRoom = negRoomMapper.selectNegRoomByRoomId(negRoom.getRoomId());
         negRoom.setUpdateTime(DateUtils.getNowDate());
-        // 更新时保持roomId与roomName一致
-        if (negRoom.getRoomName() != null) {
-            negRoom.setRoomId(Long.valueOf(negRoom.getRoomName()));
-        }
         int result = negRoomMapper.updateNegRoom(negRoom);
-        if (result > 0 && !oldRoom.getRoomName().equals(negRoom.getRoomName())) {
-            // 更新数据字典中的房间名称，保持dict_value与roomName一致
+        if (result > 0) {
+            // 更新数据字典中的房间信息，保持roomId=dict_value，roomName=dict_label
             SysDictData dictData = new SysDictData();
             dictData.setDictType("oa_negroom_name");
-            dictData.setDictValue(oldRoom.getRoomName()); // 使用旧的roomName查找记录
+            dictData.setDictValue(String.valueOf(negRoom.getRoomId())); // 使用roomId查找记录
             // 查找并更新数据字典中的记录
             List<SysDictData> dictList = dictDataService.selectDictDataList(dictData);
             if (!dictList.isEmpty()) {
                 SysDictData updateDict = dictList.get(0);
-                updateDict.setDictLabel(negRoom.getRoomName());
-                updateDict.setDictValue(negRoom.getRoomName()); // 保持dict_value与roomName一致
+                updateDict.setDictLabel(negRoom.getRoomName()); // roomName作为dict_label
                 dictDataService.updateDictData(updateDict);
             }
         }
@@ -124,15 +114,12 @@ public class NegRoomServiceImpl implements INegRoomService
     {
         // 删除数据字典中的记录
         for (Long roomId : roomIds) {
-            NegRoom room = negRoomMapper.selectNegRoomByRoomId(roomId);
-            if (room != null) {
-                SysDictData dictData = new SysDictData();
-                dictData.setDictType("oa_negroom_name");
-                dictData.setDictValue(room.getRoomName()); // 使用roomName作为dict_value查找
-                List<SysDictData> dictList = dictDataService.selectDictDataList(dictData);
-                if (!dictList.isEmpty()) {
-                    dictDataService.deleteDictDataByIds(new Long[]{dictList.get(0).getDictCode()});
-                }
+            SysDictData dictData = new SysDictData();
+            dictData.setDictType("oa_negroom_name");
+            dictData.setDictValue(String.valueOf(roomId)); // 使用roomId作为dict_value查找
+            List<SysDictData> dictList = dictDataService.selectDictDataList(dictData);
+            if (!dictList.isEmpty()) {
+                dictDataService.deleteDictDataByIds(new Long[]{dictList.get(0).getDictCode()});
             }
         }
         return negRoomMapper.deleteNegRoomByRoomIds(roomIds);
@@ -148,15 +135,12 @@ public class NegRoomServiceImpl implements INegRoomService
     public int deleteNegRoomByRoomId(Long roomId)
     {
         // 删除数据字典中的记录
-        NegRoom room = negRoomMapper.selectNegRoomByRoomId(roomId);
-        if (room != null) {
-            SysDictData dictData = new SysDictData();
-            dictData.setDictType("oa_negroom_name");
-            dictData.setDictValue(room.getRoomName()); // 使用roomName作为dict_value查找
-            List<SysDictData> dictList = dictDataService.selectDictDataList(dictData);
-            if (!dictList.isEmpty()) {
-                dictDataService.deleteDictDataByIds(new Long[]{dictList.get(0).getDictCode()});
-            }
+        SysDictData dictData = new SysDictData();
+        dictData.setDictType("oa_negroom_name");
+        dictData.setDictValue(String.valueOf(roomId)); // 使用roomId作为dict_value查找
+        List<SysDictData> dictList = dictDataService.selectDictDataList(dictData);
+        if (!dictList.isEmpty()) {
+            dictDataService.deleteDictDataByIds(new Long[]{dictList.get(0).getDictCode()});
         }
         return negRoomMapper.deleteNegRoomByRoomId(roomId);
     }
