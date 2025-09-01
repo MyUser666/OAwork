@@ -92,7 +92,7 @@
       <el-table-column label="创建者" align="center" prop="createBy" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
@@ -159,9 +159,11 @@
 
 <script setup name="Negroom">
 import { listNegroom, getNegroom, delNegroom, addNegroom, updateNegroom } from "@/api/negotiateroom/negroom"
+import useUserStore from '@/store/modules/user'
 
 const { proxy } = getCurrentInstance()
 const { oa_negroom_status } = proxy.useDict('oa_negroom_status')
+const userStore = useUserStore()
 
 const negroomList = ref([])
 const open = ref(false)
@@ -278,6 +280,11 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["negroomRef"].validate(valid => {
     if (valid) {
+      // 设置创建者为当前用户名
+      if (!form.value.roomId) {
+        form.value.createBy = userStore.name
+      }
+      
       if (form.value.roomId != null) {
         updateNegroom(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功")
