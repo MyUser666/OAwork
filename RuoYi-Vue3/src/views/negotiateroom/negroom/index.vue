@@ -9,10 +9,10 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="容纳人数" prop="capacity">
+      <el-form-item label="设备信息" prop="equipment">
         <el-input
-          v-model="queryParams.capacity"
-          placeholder="请输入容纳人数"
+          v-model="queryParams.equipment"
+          placeholder="请输入设备信息"
           clearable
           @keyup.enter="handleQuery"
         />
@@ -20,7 +20,7 @@
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
           <el-option
-            v-for="dict in oa_status"
+            v-for="dict in oa_negroom_status"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -85,22 +85,16 @@
       <el-table-column label="缓冲时间" align="center" prop="bufferTime" />
       <el-table-column label="状态" align="center" prop="status">
         <template #default="scope">
-          <dict-tag :options="oa_status" :value="scope.row.status"/>
+          <dict-tag :options="oa_negroom_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
+      <el-table-column label="显示顺序" align="center" prop="orderNum" />
       <el-table-column label="创建者" align="center" prop="createBy" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新者" align="center" prop="updateBy" />
-      <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="显示顺序" align="center" prop="orderNum" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -139,12 +133,15 @@
         <el-form-item label="状态" prop="status">
           <el-select v-model="form.status" placeholder="请选择状态">
             <el-option
-              v-for="dict in oa_status"
+              v-for="dict in oa_negroom_status"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
             ></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="显示顺序" prop="orderNum">
+          <el-input v-model="form.orderNum" placeholder="请输入显示顺序" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
@@ -164,7 +161,7 @@
 import { listNegroom, getNegroom, delNegroom, addNegroom, updateNegroom } from "@/api/negotiateroom/negroom"
 
 const { proxy } = getCurrentInstance()
-const { oa_status } = proxy.useDict('oa_status')
+const { oa_negroom_status } = proxy.useDict('oa_negroom_status')
 
 const negroomList = ref([])
 const open = ref(false)
@@ -183,7 +180,7 @@ const data = reactive({
     pageSize: 10,
     roomName: null,
     location: null,
-    capacity: null,
+    equipment: null,
     status: null,
   },
   rules: {
@@ -230,11 +227,11 @@ function reset() {
     equipment: null,
     bufferTime: null,
     status: null,
+    orderNum: null,
     createBy: null,
     createTime: null,
     updateBy: null,
     updateTime: null,
-    orderNum: null,
     remark: null
   }
   proxy.resetForm("negroomRef")

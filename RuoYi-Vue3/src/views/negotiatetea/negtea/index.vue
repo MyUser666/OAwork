@@ -12,7 +12,7 @@
       <el-form-item label="分类" prop="category">
         <el-select v-model="queryParams.category" placeholder="请选择分类" clearable>
           <el-option
-            v-for="dict in on_neg_tea_type"
+            v-for="dict in on_negtea_type"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -30,7 +30,7 @@
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
           <el-option
-            v-for="dict in oa_status"
+            v-for="dict in on_negtea_status"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -91,13 +91,13 @@
       <el-table-column label="茶水名称" align="center" prop="teaName" />
       <el-table-column label="分类" align="center" prop="category">
         <template #default="scope">
-          <dict-tag :options="on_neg_tea_type" :value="scope.row.category"/>
+          <dict-tag :options="on_negtea_type" :value="scope.row.category"/>
         </template>
       </el-table-column>
       <el-table-column label="库存数量" align="center" prop="stockQuantity" />
       <el-table-column label="状态" align="center" prop="status">
         <template #default="scope">
-          <dict-tag :options="oa_status" :value="scope.row.status"/>
+          <dict-tag :options="on_negtea_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
       <el-table-column label="创建者" align="center" prop="createBy" />
@@ -133,7 +133,7 @@
         <el-form-item label="分类" prop="category">
           <el-select v-model="form.category" placeholder="请选择分类">
             <el-option
-              v-for="dict in on_neg_tea_type"
+              v-for="dict in on_negtea_type"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
@@ -146,7 +146,7 @@
         <el-form-item label="状态" prop="status">
           <el-select v-model="form.status" placeholder="请选择状态">
             <el-option
-              v-for="dict in oa_status"
+              v-for="dict in on_negtea_status"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
@@ -171,7 +171,7 @@
 import { listNegtea, getNegtea, delNegtea, addNegtea, updateNegtea } from "@/api/negotiatetea/negtea"
 
 const { proxy } = getCurrentInstance()
-const { oa_status, on_neg_tea_type } = proxy.useDict('oa_status', 'on_neg_tea_type')
+const { on_negtea_status, on_negtea_type } = proxy.useDict('on_negtea_status', 'on_negtea_type')
 
 const negteaList = ref([])
 const open = ref(false)

@@ -17,15 +17,19 @@ import com.intoa.common.core.controller.BaseController;
 import com.intoa.common.core.domain.AjaxResult;
 import com.intoa.common.enums.BusinessType;
 import com.intoa.negotiate.domain.NegLog;
+import com.intoa.negotiate.domain.NegRoom;
 import com.intoa.negotiate.service.INegLogService;
+import com.intoa.negotiate.mapper.NegRoomMapper;
 import com.intoa.common.utils.poi.ExcelUtil;
 import com.intoa.common.core.page.TableDataInfo;
+import com.intoa.common.core.domain.entity.SysUser;
+import com.intoa.common.utils.SecurityUtils;
 
 /**
  * 预约管理Controller
  * 
- * @author ruoyi
- * @date 2025-08-21
+ * @author beihai
+ * @date 2025-08-28
  */
 @RestController
 @RequestMapping("/negotiatelog/neglog")
@@ -33,6 +37,9 @@ public class NegLogController extends BaseController
 {
     @Autowired
     private INegLogService negLogService;
+    
+    @Autowired
+    private NegRoomMapper negRoomMapper;
 
     /**
      * 查询预约管理列表
@@ -70,6 +77,30 @@ public class NegLogController extends BaseController
     }
 
     /**
+     * 获取所有可用房间列表
+     */
+    @PreAuthorize("@ss.hasPermi('negotiatelog:neglog:list')")
+    @GetMapping("/availableRooms")
+    public AjaxResult getAvailableRooms()
+    {
+        NegRoom room = new NegRoom();
+        room.setStatus("0"); // 只查询可用状态的房间
+        List<NegRoom> rooms = negRoomMapper.selectNegRoomList(room);
+        return AjaxResult.success(rooms);
+    }
+
+    /**
+     * 获取指定房间的详细信息
+     */
+    @PreAuthorize("@ss.hasPermi('negotiatelog:neglog:list')")
+    @GetMapping("/room/{roomId}")
+    public AjaxResult getRoomDetail(@PathVariable("roomId") Long roomId)
+    {
+        NegRoom room = negRoomMapper.selectNegRoomByRoomId(roomId);
+        return AjaxResult.success(room);
+    }
+
+    /**
      * 新增预约管理
      */
     @PreAuthorize("@ss.hasPermi('negotiatelog:neglog:add')")
@@ -77,6 +108,11 @@ public class NegLogController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody NegLog negLog)
     {
+        // 自动填充当前登录用户的昵称
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        negLog.setNickName(user.getNickName());
+        negLog.setUserId(user.getUserId());
+        
         return toAjax(negLogService.insertNegLog(negLog));
     }
 

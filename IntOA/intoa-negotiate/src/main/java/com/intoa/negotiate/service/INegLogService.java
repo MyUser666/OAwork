@@ -6,8 +6,8 @@ import com.intoa.negotiate.domain.NegLog;
 /**
  * 预约管理Service接口
  * 
- * @author ruoyi
- * @date 2025-08-21
+ * @author beihai
+ * @date 2025-08-28
  */
 public interface INegLogService 
 {
@@ -26,6 +26,7 @@ public interface INegLogService
      * @return 预约管理集合
      */
     public List<NegLog> selectNegLogList(NegLog negLog);
+
 
     /**
      * 新增预约管理

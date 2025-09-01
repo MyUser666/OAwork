@@ -1,6 +1,5 @@
 package com.intoa.negotiate.domain;
 
-import java.util.List;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -11,8 +10,8 @@ import com.intoa.common.core.domain.BaseEntity;
 /**
  * 预约管理对象 oa_neg_log
  * 
- * @author ruoyi
- * @date 2025-08-21
+ * @author beihai
+ * @date 2025-08-28
  */
 public class NegLog extends BaseEntity
 {
@@ -28,18 +27,18 @@ public class NegLog extends BaseEntity
     /** 房间ID */
     private Long roomId;
 
-    /** 房间名称 */
-    @Excel(name = "房间名称")
+    /** 房间名称（创建时的快照） */
+    @Excel(name = "房间名称", readConverterExp = "创=建时的快照")
     private String roomName;
 
-    /** 用户ID */
+    /** 律师用户ID（关联 sys_user.user_id） */
     private Long userId;
 
-    /** 角色ID */
+    /** 律师角色ID（关联 sys_role.role_id）- 用于数据权限 */
     private Long roleId;
 
-    /** 预约人 */
-    @Excel(name = "预约人")
+    /** 用户昵称 */
+    @Excel(name = "用户昵称")
     private String nickName;
 
     /** 当事人姓名 */
@@ -47,6 +46,7 @@ public class NegLog extends BaseEntity
     private String clientName;
 
     /** 当事人联系方式 */
+    @Excel(name = "当事人联系方式")
     private String clientContact;
 
     /** 相关案号/案由 */
@@ -54,21 +54,18 @@ public class NegLog extends BaseEntity
     private String caseReference;
 
     /** 开始时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "开始时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @Excel(name = "开始时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm")
     private Date startTime;
 
     /** 结束时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "结束时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @Excel(name = "结束时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm")
     private Date endTime;
 
     /** 状态（0待确认 1已确认 2已签到 3已完成 4已取消） */
     @Excel(name = "状态", readConverterExp = "0=待确认,1=已确认,2=已签到,3=已完成,4=已取消")
     private String status;
-
-    /** 预约茶水关联信息 */
-    private List<NegLogTea> negLogTeaList;
 
     public void setLogId(Long logId) 
     {
@@ -200,16 +197,6 @@ public class NegLog extends BaseEntity
         return status;
     }
 
-    public List<NegLogTea> getNegLogTeaList()
-    {
-        return negLogTeaList;
-    }
-
-    public void setNegLogTeaList(List<NegLogTea> negLogTeaList)
-    {
-        this.negLogTeaList = negLogTeaList;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -231,7 +218,6 @@ public class NegLog extends BaseEntity
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
-            .append("negLogTeaList", getNegLogTeaList())
             .toString();
     }
 }

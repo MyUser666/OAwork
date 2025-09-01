@@ -1,34 +1,18 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="预约标题" prop="title">
+      <el-form-item label="房间名称" prop="roomName">
         <el-input
-          v-model="queryParams.title"
-          placeholder="请输入预约标题"
+          v-model="queryParams.roomName"
+          placeholder="请输入房间名称"
           clearable
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="预约人" prop="nickName">
+      <el-form-item label="用户昵称" prop="nickName">
         <el-input
           v-model="queryParams.nickName"
-          placeholder="请输入预约人"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="当事人姓名" prop="clientName">
-        <el-input
-          v-model="queryParams.clientName"
-          placeholder="请输入当事人姓名"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="相关案号/案由" prop="caseReference">
-        <el-input
-          v-model="queryParams.caseReference"
-          placeholder="请输入相关案号/案由"
+          placeholder="请输入用户昵称"
           clearable
           @keyup.enter="handleQuery"
         />
@@ -36,7 +20,7 @@
       <el-form-item label="开始时间" style="width: 308px">
         <el-date-picker
           v-model="daterangeStartTime"
-          value-format="YYYY-MM-DD"
+          value-format="YYYY-MM-DD HH:mm:ss"
           type="daterange"
           range-separator="-"
           start-placeholder="开始日期"
@@ -44,9 +28,7 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <!-- 状态选择下拉框，绑定queryParams.status用于查询条件 -->
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
-          <!-- 遍历oa_neg_log_status数据字典，生成状态选项 -->
           <el-option
             v-for="dict in oa_neg_log_status"
             :key="dict.value"
@@ -54,14 +36,6 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="创建者" prop="createBy">
-        <el-input
-          v-model="queryParams.createBy"
-          placeholder="请输入创建者"
-          clearable
-          @keyup.enter="handleQuery"
-        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -116,8 +90,9 @@
       <el-table-column label="主键ID" align="center" prop="logId" />
       <el-table-column label="预约标题" align="center" prop="title" />
       <el-table-column label="房间名称" align="center" prop="roomName" />
-      <el-table-column label="预约人" align="center" prop="nickName" />
+      <el-table-column label="用户昵称" align="center" prop="nickName" />
       <el-table-column label="当事人姓名" align="center" prop="clientName" />
+      <el-table-column label="当事人联系方式" align="center" prop="clientContact" />
       <el-table-column label="相关案号/案由" align="center" prop="caseReference" />
       <el-table-column label="开始时间" align="center" prop="startTime" width="180">
         <template #default="scope">
@@ -135,11 +110,6 @@
         </template>
       </el-table-column>
       <el-table-column label="创建者" align="center" prop="createBy" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -163,8 +133,26 @@
         <el-form-item label="预约标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入预约标题" />
         </el-form-item>
-        <el-form-item label="预约人" prop="nickName">
-          <el-input v-model="form.nickName" placeholder="请输入预约人" />
+        <el-form-item label="房间名称" prop="roomName">
+          <el-select v-model="form.roomName" placeholder="请选择房间名称" @change="handleRoomNameChange">
+           <el-option
+           v-for="item in roomList"
+            :key="item.roomId"
+            :label="item.roomName"
+            :value="item.roomName"
+            @mouseenter="showRoomDetail(item.roomId)"
+            @mouseleave="hideRoomDetail"
+    />
+  </el-select>        </el-form-item>
+        <el-form-item prop="roomId" style="display: none;">
+          <el-input v-model="form.roomId" />
+        </el-form-item>
+        <!-- 添加隐藏的用户ID字段 -->
+        <el-form-item prop="userId" style="display: none;">
+          <el-input v-model="form.userId" />
+        </el-form-item>
+        <el-form-item label="用户昵称" prop="nickName">
+          <el-input v-model="form.nickName" placeholder="请输入用户昵称" disabled />
         </el-form-item>
         <el-form-item label="当事人姓名" prop="clientName">
           <el-input v-model="form.clientName" placeholder="请输入当事人姓名" />
@@ -179,7 +167,7 @@
           <el-date-picker clearable
             v-model="form.startTime"
             type="date"
-            value-format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD HH:mm"
             placeholder="请选择开始时间">
           </el-date-picker>
         </el-form-item>
@@ -187,7 +175,7 @@
           <el-date-picker clearable
             v-model="form.endTime"
             type="date"
-            value-format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD HH:mm"
             placeholder="请选择结束时间">
           </el-date-picker>
         </el-form-item>
@@ -204,29 +192,6 @@
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-divider content-position="center">预约茶水关联信息</el-divider>
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button type="primary" icon="Plus" @click="handleAddNegLogTea">添加</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="danger" icon="Delete" @click="handleDeleteNegLogTea">删除</el-button>
-          </el-col>
-        </el-row>
-        <el-table :data="negLogTeaList" :row-class-name="rowNegLogTeaIndex" @selection-change="handleNegLogTeaSelectionChange" ref="negLogTea">
-          <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="序号" align="center" prop="index" width="50"/>
-          <el-table-column label="茶水ID" prop="teaId" width="150">
-            <template #default="scope">
-              <el-input v-model="scope.row.teaId" placeholder="请输入茶水ID" />
-            </template>
-          </el-table-column>
-          <el-table-column label="数量" prop="quantity" width="150">
-            <template #default="scope">
-              <el-input v-model="scope.row.quantity" placeholder="请输入数量" />
-            </template>
-          </el-table-column>
-        </el-table>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -245,17 +210,16 @@ const { proxy } = getCurrentInstance()
 const { oa_neg_log_status } = proxy.useDict('oa_neg_log_status')
 
 const neglogList = ref([])
-const negLogTeaList = ref([])
 const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
 const ids = ref([])
-const checkedNegLogTea = ref([])
 const single = ref(true)
 const multiple = ref(true)
 const total = ref(0)
 const title = ref("")
 const daterangeStartTime = ref([])
+const daterangeEndTime = ref([])
 const daterangeCreateTime = ref([])
 
 const data = reactive({
@@ -263,27 +227,21 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    title: null,
     roomName: null,
     nickName: null,
-    clientName: null,
-    caseReference: null,
     startTime: null,
+    endTime: null,
     status: null,
-    createBy: null,
   },
   rules: {
     title: [
       { required: true, message: "预约标题不能为空", trigger: "blur" }
     ],
     roomName: [
-      { required: true, message: "房间名称不能为空", trigger: "change" }
+      { required: true, message: "房间名称不能为空", trigger: "blur" }
     ],
     nickName: [
-      { required: true, message: "预约人不能为空", trigger: "blur" }
-    ],
-    clientName: [
-      { required: true, message: "当事人姓名不能为空", trigger: "blur" }
+      { required: true, message: "用户昵称不能为空", trigger: "blur" }
     ],
     startTime: [
       { required: true, message: "开始时间不能为空", trigger: "blur" }
@@ -306,6 +264,10 @@ function getList() {
   if (null != daterangeStartTime && '' != daterangeStartTime) {
     queryParams.value.params["beginStartTime"] = daterangeStartTime.value[0]
     queryParams.value.params["endStartTime"] = daterangeStartTime.value[1]
+  }
+  if (null != daterangeEndTime && '' != daterangeEndTime) {
+    queryParams.value.params["beginEndTime"] = daterangeEndTime.value[0]
+    queryParams.value.params["endEndTime"] = daterangeEndTime.value[1]
   }
   if (null != daterangeCreateTime && '' != daterangeCreateTime) {
     queryParams.value.params["beginCreateTime"] = daterangeCreateTime.value[0]
@@ -346,7 +308,6 @@ function reset() {
     updateTime: null,
     remark: null
   }
-  negLogTeaList.value = []
   proxy.resetForm("neglogRef")
 }
 
@@ -359,6 +320,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   daterangeStartTime.value = []
+  daterangeEndTime.value = []
   daterangeCreateTime.value = []
   proxy.resetForm("queryRef")
   handleQuery()
@@ -384,7 +346,6 @@ function handleUpdate(row) {
   const _logId = row.logId || ids.value
   getNeglog(_logId).then(response => {
     form.value = response.data
-    negLogTeaList.value = response.data.negLogTeaList
     open.value = true
     title.value = "修改预约管理"
   })
@@ -394,7 +355,6 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["neglogRef"].validate(valid => {
     if (valid) {
-      form.value.negLogTeaList = negLogTeaList.value
       if (form.value.logId != null) {
         updateNeglog(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功")
@@ -423,43 +383,49 @@ function handleDelete(row) {
   }).catch(() => {})
 }
 
-/** 预约茶水关联序号 */
-function rowNegLogTeaIndex({ row, rowIndex }) {
-  row.index = rowIndex + 1
-}
-
-/** 预约茶水关联添加按钮操作 */
-function handleAddNegLogTea() {
-  let obj = {}
-  obj.teaId = ""
-  obj.quantity = ""
-  obj.remark = ""
-  negLogTeaList.value.push(obj)
-}
-
-/** 预约茶水关联删除按钮操作 */
-function handleDeleteNegLogTea() {
-  if (checkedNegLogTea.value.length == 0) {
-    proxy.$modal.msgError("请先选择要删除的预约茶水关联数据")
-  } else {
-    const negLogTeas = negLogTeaList.value
-    const checkedNegLogTeas = checkedNegLogTea.value
-    negLogTeaList.value = negLogTeas.filter(function(item) {
-      return checkedNegLogTeas.indexOf(item.index) == -1
-    })
-  }
-}
-
-/** 复选框选中数据 */
-function handleNegLogTeaSelectionChange(selection) {
-  checkedNegLogTea.value = selection.map(item => item.index)
-}
-
 /** 导出按钮操作 */
 function handleExport() {
   proxy.download('negotiatelog/neglog/export', {
     ...queryParams.value
   }, `neglog_${new Date().getTime()}.xlsx`)
+}
+
+/** 处理房间名称变化，自动绑定房间ID */
+function handleRoomNameChange() {
+  // 这里应该调用后端API根据房间名称获取房间ID
+  // 示例代码，实际需要根据项目情况调整
+  if (form.value.roomName) {
+    // 假设有一个API可以根据房间名称获取房间信息
+    // getRoomIdByName(form.value.roomName).then(response => {
+    //   form.value.roomId = response.data.roomId;
+    // }).catch(() => {
+    //   form.value.roomId = null;
+    // });
+    
+    // 临时处理：房间名称和ID相同（需要根据实际业务替换）
+    form.value.roomId = form.value.roomName;
+  } else {
+    form.value.roomId = null;
+  }
+}
+
+// 添加处理用户昵称变化，自动绑定用户ID的函数
+function handleNickNameChange() {
+  // 调用后端API根据用户昵称获取用户ID
+  if (form.value.nickName) {
+    // 需要实现一个根据昵称获取用户信息的API
+    // getUserInfoByNickName(form.value.nickName).then(response => {
+    //   form.value.userId = response.data.userId;
+    // }).catch(() => {
+    //   form.value.userId = null;
+    // });
+    
+    // 临时处理：这里应该调用实际的API获取用户ID
+    // 示例代码，实际需要根据项目情况调整
+    console.log("需要根据昵称 " + form.value.nickName + " 获取用户ID");
+  } else {
+    form.value.userId = null;
+  }
 }
 
 getList()
