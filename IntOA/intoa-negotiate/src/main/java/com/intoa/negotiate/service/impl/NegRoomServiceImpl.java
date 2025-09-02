@@ -4,6 +4,7 @@ import java.util.List;
 // 导入日期工具类，用于获取当前时间
 import com.intoa.common.utils.DateUtils;
 // 导入Spring的注解，用于自动装配依赖
+import com.intoa.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 // 导入Spring的注解，用于标记服务层组件
 import org.springframework.stereotype.Service;
@@ -75,6 +76,10 @@ public class NegRoomServiceImpl implements INegRoomService
     @Transactional(rollbackFor = Exception.class)
     public int insertNegRoom(NegRoom negRoom)
     {
+        // 设置创建者为当前用户的昵称
+        negRoom.setCreateBy(SecurityUtils.getLoginUser().getUser().getNickName());
+        // 设置更新者为当前用户的昵称
+        negRoom.setUpdateBy(SecurityUtils.getLoginUser().getUser().getNickName());
         // 设置创建时间为当前时间
         negRoom.setCreateTime(DateUtils.getNowDate());
         // 设置更新时间为当前时间
@@ -116,6 +121,8 @@ public class NegRoomServiceImpl implements INegRoomService
     {
         // 查询修改前的洽谈室信息
         NegRoom oldRoom = negRoomMapper.selectNegRoomByRoomId(negRoom.getRoomId());
+        // 设置更新者为当前用户的昵称
+        negRoom.setUpdateBy(SecurityUtils.getLoginUser().getUser().getNickName());
         // 设置更新时间为当前时间
         negRoom.setUpdateTime(DateUtils.getNowDate());
         // 调用Mapper接口更新洽谈室信息

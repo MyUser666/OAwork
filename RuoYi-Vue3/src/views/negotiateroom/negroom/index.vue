@@ -93,7 +93,7 @@
         </template>
       </el-table-column>
       <el-table-column label="显示顺序" align="center" prop="orderNum" />
-      <el-table-column label="创建者" align="center" prop="createBy" />
+      <el-table-column label="更新人" align="center" prop="updateBy" />
       <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
@@ -284,11 +284,6 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["negroomRef"].validate(valid => {
     if (valid) {
-      // 设置创建者为当前用户名
-      if (!form.value.roomId) {
-        form.value.createBy = userStore.name
-      }
-      
       if (form.value.roomId != null) {
         updateNegroom(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功")
