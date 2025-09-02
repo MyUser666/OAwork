@@ -132,7 +132,13 @@
           <el-input v-model="form.equipment" placeholder="请输入设备信息" />
         </el-form-item>
         <el-form-item label="缓冲时间" prop="bufferTime">
-          <el-input v-model="form.bufferTime" placeholder="请输入缓冲时间" />
+          <el-time-picker
+            v-model="form.bufferTime"
+            value-format="HH:mm"
+            format="HH:mm"
+            placeholder="请选择缓冲时间"
+            style="width: 100%"
+          />
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-select v-model="form.status" placeholder="请选择状态">
@@ -231,7 +237,7 @@ function reset() {
     location: null,
     capacity: null,
     equipment: null,
-    bufferTime: null,
+    bufferTime: "00:10",
     status: null,
     orderNum: null,
     createBy: null,

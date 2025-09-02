@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.intoa.common.annotation.Excel;
 import com.intoa.common.core.domain.BaseEntity;
 
+import java.time.LocalTime;
+
 /**
  * 洽谈室管理对象 oa_neg_room
  *
@@ -34,9 +36,9 @@ public class NegRoom extends BaseEntity
     @Excel(name = "设备信息", readConverterExp = "如=投影仪、白板")
     private String equipment;
 
-    /** 缓冲时间（分钟） */
-    @Excel(name = "缓冲时间", readConverterExp = "分=钟")
-    private Long bufferTime;
+    /** 缓冲时间 */
+    @Excel(name = "缓冲时间")
+    private LocalTime bufferTime;
 
     /** 状态（0可用 1使用中 2禁用） */
     @Excel(name = "状态", readConverterExp = "0=可用,1=使用中,2=禁用")
@@ -96,12 +98,12 @@ public class NegRoom extends BaseEntity
         return equipment;
     }
 
-    public void setBufferTime(Long bufferTime)
+    public void setBufferTime(LocalTime bufferTime)
     {
         this.bufferTime = bufferTime;
     }
 
-    public Long getBufferTime()
+    public LocalTime getBufferTime()
     {
         return bufferTime;
     }
