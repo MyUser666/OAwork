@@ -26,12 +26,13 @@
 
     <select id="selectNegRoomList" parameterType="NegRoom" resultMap="NegRoomResult">
         <include refid="selectNegRoomVo"/>
-        <where>
+        <where>  
             <if test="roomName != null  and roomName != ''"> and room_name like concat('%', #{roomName}, '%')</if>
             <if test="location != null  and location != ''"> and location like concat('%', #{location}, '%')</if>
             <if test="equipment != null  and equipment != ''"> and equipment = #{equipment}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
         </where>
+        ORDER BY order_num ASC, update_time DESC
     </select>
 
     <select id="selectNegRoomByRoomId" parameterType="Long" resultMap="NegRoomResult">

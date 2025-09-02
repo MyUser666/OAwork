@@ -77,6 +77,8 @@ public class NegRoomServiceImpl implements INegRoomService
     {
         // 设置创建时间为当前时间
         negRoom.setCreateTime(DateUtils.getNowDate());
+        // 设置更新时间为当前时间
+        negRoom.setUpdateTime(DateUtils.getNowDate());
         // 调用Mapper接口插入洽谈室信息
         int result = negRoomMapper.insertNegRoom(negRoom);
         // 如果插入成功，则同步添加到数据字典

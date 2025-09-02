@@ -77,7 +77,11 @@
 
     <el-table v-loading="loading" :data="negroomList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="洽谈室主键ID" align="center" prop="roomId" />
+      <el-table-column label="序号" align="center">
+        <template #default="scope">
+          <span>{{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="房间名称" align="center" prop="roomName" />
       <el-table-column label="位置" align="center" prop="location" />
       <el-table-column label="容纳人数" align="center" prop="capacity" />
@@ -90,9 +94,9 @@
       </el-table-column>
       <el-table-column label="显示顺序" align="center" prop="orderNum" />
       <el-table-column label="创建者" align="center" prop="createBy" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+      <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
