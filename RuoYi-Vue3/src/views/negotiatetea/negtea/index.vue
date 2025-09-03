@@ -87,7 +87,11 @@
 
     <el-table v-loading="loading" :data="negteaList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="茶水主键ID" align="center" prop="teaId" />
+     <el-table-column label="序号" align="center">
+        <template #default="scope">
+          <span>{{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="茶水名称" align="center" prop="teaName" />
       <el-table-column label="分类" align="center" prop="category">
         <template #default="scope">
@@ -104,7 +108,7 @@
       <el-table-column label="更新者" align="center" prop="updateBy" />
       <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
@@ -231,7 +235,7 @@ function reset() {
     teaName: null,
     category: null,
     stockQuantity: null,
-    status: null,
+    status: "0",
     createBy: null,
     createTime: null,
     updateBy: null,
