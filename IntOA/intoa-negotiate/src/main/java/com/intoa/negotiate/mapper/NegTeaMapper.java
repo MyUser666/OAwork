@@ -2,6 +2,7 @@ package com.intoa.negotiate.mapper;
 
 import java.util.List;
 import com.intoa.negotiate.domain.NegTea;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 茶水管理Mapper接口
@@ -9,6 +10,7 @@ import com.intoa.negotiate.domain.NegTea;
  * @author beihai
  * @date 2025-08-22
  */
+@Mapper
 public interface NegTeaMapper
 {
     /**
