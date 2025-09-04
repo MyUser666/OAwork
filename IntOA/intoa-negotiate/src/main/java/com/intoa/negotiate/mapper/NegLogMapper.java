@@ -6,16 +6,16 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 预约管理Mapper接口
- * 
+ *
  * @author beihai
- * @date 2025-08-28
+ * @date 2025-09-03
  */
 @Mapper
-public interface NegLogMapper 
+public interface NegLogMapper
 {
     /**
      * 查询预约管理
-     * 
+     *
      * @param logId 预约管理主键
      * @return 预约管理
      */
@@ -23,7 +23,7 @@ public interface NegLogMapper
 
     /**
      * 查询预约管理列表
-     * 
+     *
      * @param negLog 预约管理
      * @return 预约管理集合
      */
@@ -31,7 +31,7 @@ public interface NegLogMapper
 
     /**
      * 新增预约管理
-     * 
+     *
      * @param negLog 预约管理
      * @return 结果
      */
@@ -39,7 +39,7 @@ public interface NegLogMapper
 
     /**
      * 修改预约管理
-     * 
+     *
      * @param negLog 预约管理
      * @return 结果
      */
@@ -47,7 +47,7 @@ public interface NegLogMapper
 
     /**
      * 删除预约管理
-     * 
+     *
      * @param logId 预约管理主键
      * @return 结果
      */
@@ -55,7 +55,7 @@ public interface NegLogMapper
 
     /**
      * 批量删除预约管理
-     * 
+     *
      * @param logIds 需要删除的数据主键集合
      * @return 结果
      */

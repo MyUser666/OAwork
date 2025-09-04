@@ -1,18 +1,28 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="房间名称" prop="roomName">
+      <el-form-item label="预约房间" prop="logRoomName">
+        <el-select v-model="queryParams.logRoomName" placeholder="请选择预约房间" clearable>
+          <el-option
+            v-for="dict in oa_negroom_name"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="用户昵称" prop="logNickName">
         <el-input
-          v-model="queryParams.roomName"
-          placeholder="请输入房间名称"
+          v-model="queryParams.logNickName"
+          placeholder="请输入用户昵称"
           clearable
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="用户昵称" prop="nickName">
+      <el-form-item label="当事人姓名" prop="clientName">
         <el-input
-          v-model="queryParams.nickName"
-          placeholder="请输入用户昵称"
+          v-model="queryParams.clientName"
+          placeholder="请输入当事人姓名"
           clearable
           @keyup.enter="handleQuery"
         />
@@ -20,7 +30,17 @@
       <el-form-item label="开始时间" style="width: 308px">
         <el-date-picker
           v-model="daterangeStartTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
+          value-format="YYYY-MM-DD"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
+      </el-form-item>
+      <el-form-item label="结束时间" style="width: 308px">
+        <el-date-picker
+          v-model="daterangeEndTime"
+          value-format="YYYY-MM-DD"
           type="daterange"
           range-separator="-"
           start-placeholder="开始日期"
@@ -30,12 +50,22 @@
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
           <el-option
-            v-for="dict in oa_neg_log_status"
+            v-for="dict in oa_neglog_status"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="更新时间" style="width: 308px">
+        <el-date-picker
+          v-model="daterangeUpdateTime"
+          value-format="YYYY-MM-DD"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -88,11 +118,20 @@
     <el-table v-loading="loading" :data="neglogList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="主键ID" align="center" prop="logId" />
+      <el-table-column label="预约房间" align="center" prop="logRoomName">
+        <template #default="scope">
+          <dict-tag :options="oa_negroom_name" :value="scope.row.logRoomName"/>
+        </template>
+      </el-table-column>
       <el-table-column label="预约标题" align="center" prop="title" />
-      <el-table-column label="房间名称" align="center" prop="roomName" />
-      <el-table-column label="用户昵称" align="center" prop="nickName" />
+      <el-table-column label="用户昵称" align="center" prop="logNickName" />
+      <el-table-column label="预约茶水" align="center" prop="logTeaName">
+        <template #default="scope">
+          <dict-tag :options="on_negtea_name" :value="scope.row.logTeaName"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="预约茶水数量" align="center" prop="logTeaNum" />
       <el-table-column label="当事人姓名" align="center" prop="clientName" />
-      <el-table-column label="当事人联系方式" align="center" prop="clientContact" />
       <el-table-column label="相关案号/案由" align="center" prop="caseReference" />
       <el-table-column label="开始时间" align="center" prop="startTime" width="180">
         <template #default="scope">
@@ -106,10 +145,14 @@
       </el-table-column>
       <el-table-column label="状态" align="center" prop="status">
         <template #default="scope">
-          <dict-tag :options="oa_neg_log_status" :value="scope.row.status"/>
+          <dict-tag :options="oa_neglog_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
-      <el-table-column label="创建者" align="center" prop="createBy" />
+      <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -130,29 +173,34 @@
     <!-- 添加或修改预约管理对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="neglogRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="预约房间" prop="logRoomName">
+          <el-select v-model="form.logRoomName" placeholder="请选择预约房间">
+            <el-option
+              v-for="dict in oa_negroom_name"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="预约标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入预约标题" />
         </el-form-item>
-        <el-form-item label="房间名称" prop="roomName">
-          <el-select v-model="form.roomName" placeholder="请选择房间名称" @change="handleRoomNameChange">
-           <el-option
-           v-for="item in roomList"
-            :key="item.roomId"
-            :label="item.roomName"
-            :value="item.roomName"
-            @mouseenter="showRoomDetail(item.roomId)"
-            @mouseleave="hideRoomDetail"
-    />
-  </el-select>        </el-form-item>
-        <el-form-item prop="roomId" style="display: none;">
-          <el-input v-model="form.roomId" />
+        <el-form-item label="用户昵称" prop="logNickName">
+          <el-input v-model="form.logNickName" placeholder="请输入用户昵称" />
         </el-form-item>
-        <!-- 添加隐藏的用户ID字段 -->
-        <el-form-item prop="userId" style="display: none;">
-          <el-input v-model="form.userId" />
+        <el-form-item label="预约茶水" prop="logTeaName">
+          <el-select v-model="form.logTeaName" placeholder="请选择预约茶水">
+            <el-option
+              v-for="dict in on_negtea_name"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="用户昵称" prop="nickName">
-          <el-input v-model="form.nickName" placeholder="请输入用户昵称" disabled />
+        <el-form-item label="预约茶水数量" prop="logTeaNum">
+          <el-input v-model="form.logTeaNum" placeholder="请输入预约茶水数量" />
         </el-form-item>
         <el-form-item label="当事人姓名" prop="clientName">
           <el-input v-model="form.clientName" placeholder="请输入当事人姓名" />
@@ -167,7 +215,7 @@
           <el-date-picker clearable
             v-model="form.startTime"
             type="date"
-            value-format="YYYY-MM-DD HH:mm"
+            value-format="YYYY-MM-DD"
             placeholder="请选择开始时间">
           </el-date-picker>
         </el-form-item>
@@ -175,14 +223,14 @@
           <el-date-picker clearable
             v-model="form.endTime"
             type="date"
-            value-format="YYYY-MM-DD HH:mm"
+            value-format="YYYY-MM-DD"
             placeholder="请选择结束时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-select v-model="form.status" placeholder="请选择状态">
             <el-option
-              v-for="dict in oa_neg_log_status"
+              v-for="dict in oa_neglog_status"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
@@ -207,7 +255,7 @@
 import { listNeglog, getNeglog, delNeglog, addNeglog, updateNeglog } from "@/api/negotiatelog/neglog"
 
 const { proxy } = getCurrentInstance()
-const { oa_neg_log_status } = proxy.useDict('oa_neg_log_status')
+const { oa_neglog_status, on_negtea_name, oa_negroom_name } = proxy.useDict('oa_neglog_status', 'on_negtea_name', 'oa_negroom_name')
 
 const neglogList = ref([])
 const open = ref(false)
@@ -220,28 +268,33 @@ const total = ref(0)
 const title = ref("")
 const daterangeStartTime = ref([])
 const daterangeEndTime = ref([])
-const daterangeCreateTime = ref([])
+const daterangeUpdateTime = ref([])
 
 const data = reactive({
   form: {},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    roomName: null,
-    nickName: null,
+    logRoomName: null,
+    logNickName: null,
+    clientName: null,
     startTime: null,
     endTime: null,
     status: null,
+    updateTime: null,
   },
   rules: {
-    title: [
-      { required: true, message: "预约标题不能为空", trigger: "blur" }
+    logRoomName: [
+      { required: true, message: "预约房间不能为空", trigger: "change" }
     ],
-    roomName: [
-      { required: true, message: "房间名称不能为空", trigger: "blur" }
-    ],
-    nickName: [
+    logNickName: [
       { required: true, message: "用户昵称不能为空", trigger: "blur" }
+    ],
+    logTeaName: [
+      { required: true, message: "预约茶水不能为空", trigger: "change" }
+    ],
+    logTeaNum: [
+      { required: true, message: "预约茶水数量不能为空", trigger: "blur" }
     ],
     startTime: [
       { required: true, message: "开始时间不能为空", trigger: "blur" }
@@ -269,9 +322,9 @@ function getList() {
     queryParams.value.params["beginEndTime"] = daterangeEndTime.value[0]
     queryParams.value.params["endEndTime"] = daterangeEndTime.value[1]
   }
-  if (null != daterangeCreateTime && '' != daterangeCreateTime) {
-    queryParams.value.params["beginCreateTime"] = daterangeCreateTime.value[0]
-    queryParams.value.params["endCreateTime"] = daterangeCreateTime.value[1]
+  if (null != daterangeUpdateTime && '' != daterangeUpdateTime) {
+    queryParams.value.params["beginUpdateTime"] = daterangeUpdateTime.value[0]
+    queryParams.value.params["endUpdateTime"] = daterangeUpdateTime.value[1]
   }
   listNeglog(queryParams.value).then(response => {
     neglogList.value = response.rows
@@ -290,12 +343,11 @@ function cancel() {
 function reset() {
   form.value = {
     logId: null,
+    logRoomName: null,
     title: null,
-    roomId: null,
-    roomName: null,
-    userId: null,
-    roleId: null,
-    nickName: null,
+    logNickName: null,
+    logTeaName: null,
+    logTeaNum: null,
     clientName: null,
     clientContact: null,
     caseReference: null,
@@ -321,7 +373,7 @@ function handleQuery() {
 function resetQuery() {
   daterangeStartTime.value = []
   daterangeEndTime.value = []
-  daterangeCreateTime.value = []
+  daterangeUpdateTime.value = []
   proxy.resetForm("queryRef")
   handleQuery()
 }
@@ -388,44 +440,6 @@ function handleExport() {
   proxy.download('negotiatelog/neglog/export', {
     ...queryParams.value
   }, `neglog_${new Date().getTime()}.xlsx`)
-}
-
-/** 处理房间名称变化，自动绑定房间ID */
-function handleRoomNameChange() {
-  // 这里应该调用后端API根据房间名称获取房间ID
-  // 示例代码，实际需要根据项目情况调整
-  if (form.value.roomName) {
-    // 假设有一个API可以根据房间名称获取房间信息
-    // getRoomIdByName(form.value.roomName).then(response => {
-    //   form.value.roomId = response.data.roomId;
-    // }).catch(() => {
-    //   form.value.roomId = null;
-    // });
-    
-    // 临时处理：房间名称和ID相同（需要根据实际业务替换）
-    form.value.roomId = form.value.roomName;
-  } else {
-    form.value.roomId = null;
-  }
-}
-
-// 添加处理用户昵称变化，自动绑定用户ID的函数
-function handleNickNameChange() {
-  // 调用后端API根据用户昵称获取用户ID
-  if (form.value.nickName) {
-    // 需要实现一个根据昵称获取用户信息的API
-    // getUserInfoByNickName(form.value.nickName).then(response => {
-    //   form.value.userId = response.data.userId;
-    // }).catch(() => {
-    //   form.value.userId = null;
-    // });
-    
-    // 临时处理：这里应该调用实际的API获取用户ID
-    // 示例代码，实际需要根据项目情况调整
-    console.log("需要根据昵称 " + form.value.nickName + " 获取用户ID");
-  } else {
-    form.value.userId = null;
-  }
 }
 
 getList()

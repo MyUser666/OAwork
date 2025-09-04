@@ -5,15 +5,15 @@ import com.intoa.negotiate.domain.NegLog;
 
 /**
  * 预约管理Service接口
- * 
+ *
  * @author beihai
- * @date 2025-08-28
+ * @date 2025-09-03
  */
-public interface INegLogService 
+public interface INegLogService
 {
     /**
      * 查询预约管理
-     * 
+     *
      * @param logId 预约管理主键
      * @return 预约管理
      */
@@ -21,16 +21,15 @@ public interface INegLogService
 
     /**
      * 查询预约管理列表
-     * 
+     *
      * @param negLog 预约管理
      * @return 预约管理集合
      */
     public List<NegLog> selectNegLogList(NegLog negLog);
 
-
     /**
      * 新增预约管理
-     * 
+     *
      * @param negLog 预约管理
      * @return 结果
      */
@@ -38,7 +37,7 @@ public interface INegLogService
 
     /**
      * 修改预约管理
-     * 
+     *
      * @param negLog 预约管理
      * @return 结果
      */
@@ -46,7 +45,7 @@ public interface INegLogService
 
     /**
      * 批量删除预约管理
-     * 
+     *
      * @param logIds 需要删除的预约管理主键集合
      * @return 结果
      */
@@ -54,7 +53,7 @@ public interface INegLogService
 
     /**
      * 删除预约管理信息
-     * 
+     *
      * @param logId 预约管理主键
      * @return 结果
      */

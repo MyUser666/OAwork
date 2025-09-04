@@ -42,19 +42,3 @@ export function delNeglog(logId) {
     method: 'delete'
   })
 }
-
-// 新增获取可用房间列表的API
-export function getAvailableRooms() {
-  return request({
-    url: '/negotiatelog/neglog/availableRooms',
-    method: 'get'
-  })
-}
-
-// 新增获取房间详情的API
-export function getRoomInfo(roomId) {
-  return request({
-    url: '/negotiatelog/neglog/roomInfo/' + roomId,
-    method: 'get'
-  })
-}
