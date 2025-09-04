@@ -117,17 +117,23 @@
 
     <el-table v-loading="loading" :data="neglogList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键ID" align="center" prop="logId" />
+      <el-table-column label="序号" align="center">
+        <template #default="scope">
+          <span>{{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="预约房间" align="center" prop="logRoomName">
         <template #default="scope">
-          <dict-tag :options="oa_negroom_name" :value="scope.row.logRoomName"/>
+          <span>{{ getDictLabel(oa_negroom_name, scope.row.logRoomName) }}</span>
+          <!-- <dict-tag :options="oa_negroom_name" :value="scope.row.logRoomName"/> -->
         </template>
       </el-table-column>
       <el-table-column label="预约标题" align="center" prop="title" />
       <el-table-column label="用户昵称" align="center" prop="logNickName" />
       <el-table-column label="预约茶水" align="center" prop="logTeaName">
         <template #default="scope">
-          <dict-tag :options="on_negtea_name" :value="scope.row.logTeaName"/>
+          <span>{{ getDictLabel(on_negtea_name, scope.row.logTeaName) }}</span>
+          <!-- <dict-tag :options="on_negtea_name" :value="scope.row.logTeaName"/> -->
         </template>
       </el-table-column>
       <el-table-column label="预约茶水数量" align="center" prop="logTeaNum" />
@@ -135,12 +141,12 @@
       <el-table-column label="相关案号/案由" align="center" prop="caseReference" />
       <el-table-column label="开始时间" align="center" prop="startTime" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="结束时间" align="center" prop="endTime" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="状态" align="center" prop="status">
@@ -150,7 +156,7 @@
       </el-table-column>
       <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
@@ -256,6 +262,11 @@ import { listNeglog, getNeglog, delNeglog, addNeglog, updateNeglog } from "@/api
 
 const { proxy } = getCurrentInstance()
 const { oa_neglog_status, on_negtea_name, oa_negroom_name } = proxy.useDict('oa_neglog_status', 'on_negtea_name', 'oa_negroom_name')
+// 数据字典映射方法
+const getDictLabel = (dictList, value) => {
+  const item = dictList.find(dict => dict.value === value)
+  return item ? item.label : value
+}
 
 const neglogList = ref([])
 const open = ref(false)
