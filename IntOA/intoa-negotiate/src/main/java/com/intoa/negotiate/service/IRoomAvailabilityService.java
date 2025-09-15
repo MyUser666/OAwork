@@ -1,5 +1,6 @@
 package com.intoa.negotiate.service;
 
+import com.intoa.negotiate.domain.NegRoom;
 import com.intoa.negotiate.domain.dto.RoomAvailabilityDTO;
 
 import java.util.Date;
@@ -8,26 +9,23 @@ import java.util.List;
 /**
  * 房间可用性服务接口
  * <p>
- * 用于处理房间在指定时间段内的可用性检查，包括房间状态检查和时间冲突检查。
+ * 提供房间可用性检查和查询功能。
  * </p>
- * 
- * @author intoa
- * @date 2025-09-12
+ *
+ * @author lingma
+ * @date 2025-09-15
  */
 public interface IRoomAvailabilityService {
 
     /**
-     * 检查房间在指定时间段内的可用性
+     * 获取所有可用房间列表
      * <p>
-     * 综合考虑房间状态（status=0表示可用）和时间冲突情况，判断房间是否可用。
+     * 获取所有状态为可用（status=0）的房间列表。
      * </p>
      *
-     * @param roomId    房间ID
-     * @param startTime 开始时间
-     * @param endTime   结束时间
-     * @return 房间可用性DTO
+     * @return 可用房间列表
      */
-    RoomAvailabilityDTO checkRoomAvailability(Long roomId, Date startTime, Date endTime);
+    List<NegRoom> getNegRoomStatus();
     
     /**
      * 检查房间在指定时间段内的可用性
