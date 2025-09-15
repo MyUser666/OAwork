@@ -9,7 +9,7 @@ import com.intoa.common.core.domain.BaseEntity;
 
 /**
  * 预约管理对象 oa_neg_log
- *
+ * 
  * @author beihai
  * @date 2025-09-03
  */
@@ -66,122 +66,111 @@ public class NegLog extends BaseEntity
     @Excel(name = "状态", readConverterExp = "0=待确认,1=已确认,2=已签到,3=已完成,4=已取消")
     private String status;
 
-    public void setLogId(Long logId)
+    public void setLogId(Long logId) 
     {
         this.logId = logId;
     }
 
-    public Long getLogId()
+    public Long getLogId() 
     {
         return logId;
     }
-
-    public void setLogRoomName(String logRoomName)
+    public void setLogRoomName(String logRoomName) 
     {
         this.logRoomName = logRoomName;
     }
 
-    public String getLogRoomName()
+    public String getLogRoomName() 
     {
         return logRoomName;
     }
-
-    public void setTitle(String title)
+    public void setTitle(String title) 
     {
         this.title = title;
     }
 
-    public String getTitle()
+    public String getTitle() 
     {
         return title;
     }
-
-    public void setLogNickName(String logNickName)
+    public void setLogNickName(String logNickName) 
     {
         this.logNickName = logNickName;
     }
 
-    public String getLogNickName()
+    public String getLogNickName() 
     {
         return logNickName;
     }
-
-    public void setLogTeaName(String logTeaName)
+    public void setLogTeaName(String logTeaName) 
     {
         this.logTeaName = logTeaName;
     }
 
-    public String getLogTeaName()
+    public String getLogTeaName() 
     {
         return logTeaName;
     }
-
-    public void setLogTeaNum(Long logTeaNum)
+    public void setLogTeaNum(Long logTeaNum) 
     {
         this.logTeaNum = logTeaNum;
     }
 
-    public Long getLogTeaNum()
+    public Long getLogTeaNum() 
     {
         return logTeaNum;
     }
-
-    public void setClientName(String clientName)
+    public void setClientName(String clientName) 
     {
         this.clientName = clientName;
     }
 
-    public String getClientName()
+    public String getClientName() 
     {
         return clientName;
     }
-
-    public void setClientContact(String clientContact)
+    public void setClientContact(String clientContact) 
     {
         this.clientContact = clientContact;
     }
 
-    public String getClientContact()
+    public String getClientContact() 
     {
         return clientContact;
     }
-
-    public void setCaseReference(String caseReference)
+    public void setCaseReference(String caseReference) 
     {
         this.caseReference = caseReference;
     }
 
-    public String getCaseReference()
+    public String getCaseReference() 
     {
         return caseReference;
     }
-
-    public void setStartTime(Date startTime)
+    public void setStartTime(Date startTime) 
     {
         this.startTime = startTime;
     }
 
-    public Date getStartTime()
+    public Date getStartTime() 
     {
         return startTime;
     }
-
-    public void setEndTime(Date endTime)
+    public void setEndTime(Date endTime) 
     {
         this.endTime = endTime;
     }
 
-    public Date getEndTime()
+    public Date getEndTime() 
     {
         return endTime;
     }
-
-    public void setStatus(String status)
+    public void setStatus(String status) 
     {
         this.status = status;
     }
 
-    public String getStatus()
+    public String getStatus() 
     {
         return status;
     }
@@ -189,23 +178,23 @@ public class NegLog extends BaseEntity
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-                .append("logId", getLogId())
-                .append("logRoomName", getLogRoomName())
-                .append("title", getTitle())
-                .append("logNickName", getLogNickName())
-                .append("logTeaName", getLogTeaName())
-                .append("logTeaNum", getLogTeaNum())
-                .append("clientName", getClientName())
-                .append("clientContact", getClientContact())
-                .append("caseReference", getCaseReference())
-                .append("startTime", getStartTime())
-                .append("endTime", getEndTime())
-                .append("status", getStatus())
-                .append("createBy", getCreateBy())
-                .append("createTime", getCreateTime())
-                .append("updateBy", getUpdateBy())
-                .append("updateTime", getUpdateTime())
-                .append("remark", getRemark())
-                .toString();
+            .append("logId", getLogId())
+            .append("logRoomName", getLogRoomName())
+            .append("title", getTitle())
+            .append("logNickName", getLogNickName())
+            .append("logTeaName", getLogTeaName())
+            .append("logTeaNum", getLogTeaNum())
+            .append("clientName", getClientName())
+            .append("clientContact", getClientContact())
+            .append("caseReference", getCaseReference())
+            .append("startTime", getStartTime())
+            .append("endTime", getEndTime())
+            .append("status", getStatus())
+            .append("createBy", getCreateBy())
+            .append("createTime", getCreateTime())
+            .append("updateBy", getUpdateBy())
+            .append("updateTime", getUpdateTime())
+            .append("remark", getRemark())
+            .toString();
     }
 }

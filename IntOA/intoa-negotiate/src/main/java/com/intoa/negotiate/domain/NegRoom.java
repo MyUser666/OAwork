@@ -40,8 +40,8 @@ public class NegRoom extends BaseEntity
     @Excel(name = "缓冲时间")
     private LocalTime bufferTime;
 
-    /** 状态（0可用 1使用中 2禁用） */
-    @Excel(name = "状态", readConverterExp = "0=可用,1=使用中,2=禁用")
+    /** 状态（0可用 1禁用） */
+    @Excel(name = "状态", readConverterExp = "0=可用,1=禁用")
     private String status;
 
     /** 显示顺序 */

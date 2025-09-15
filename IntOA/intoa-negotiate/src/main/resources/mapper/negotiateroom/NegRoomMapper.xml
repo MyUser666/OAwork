@@ -39,6 +39,11 @@
         <include refid="selectNegRoomVo"/>
         where room_id = #{roomId}
     </select>
+    
+    <select id="selectNegRoomByRoomName" parameterType="String" resultMap="NegRoomResult">
+        <include refid="selectNegRoomVo"/>
+        where room_name = #{roomName}
+    </select>
 
     <insert id="insertNegRoom" parameterType="NegRoom" useGeneratedKeys="true" keyProperty="roomId">
         insert into oa_neg_room

@@ -20,6 +20,14 @@ public interface NegRoomMapper
      * @return 洽谈室管理
      */
     public NegRoom selectNegRoomByRoomId(Long roomId);
+    
+    /**
+     * 根据房间名称查询洽谈室管理
+     *
+     * @param roomName 房间名称
+     * @return 洽谈室管理
+     */
+    public NegRoom selectNegRoomByRoomName(String roomName);
 
     /**
      * 查询洽谈室管理列表
