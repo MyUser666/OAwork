@@ -7,25 +7,15 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 房间可用性服务接口
+ * 房间预约冲突计算接口
  * <p>
- * 提供房间可用性检查和查询功能。
+ * 提供计算房间预约时间冲突检查和可预约房间查询功能。
  * </p>
  *
  * @author lingma
  * @date 2025-09-15
  */
 public interface IRoomAvailabilityService {
-
-    /**
-     * 获取所有可用房间列表
-     * <p>
-     * 获取所有状态为可用（status=0）的房间列表。
-     * </p>
-     *
-     * @return 可用房间列表
-     */
-    List<NegRoom> getNegRoomStatus();
     
     /**
      * 检查房间在指定时间段内的可用性

@@ -32,6 +32,18 @@ public interface NegLogMapper
     public List<NegLog> selectNegLogList(NegLog negLog);
 
     /**
+     * 查询指定房间在指定时间段的预约记录
+     * 
+     * @param roomName 房间名称
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 预约记录列表
+     */
+    public List<NegLog> selectNegLogListByRoomAndTime(@Param("roomName") String roomName,
+                                                      @Param("startTime") Date startTime,
+                                                      @Param("endTime") Date endTime);
+
+    /**
      * 新增预约管理
      *
      * @param negLog 预约管理
@@ -62,16 +74,5 @@ public interface NegLogMapper
      * @return 结果
      */
     public int deleteNegLogByLogIds(Long[] logIds);
-    
-    /**
-     * 统计指定房间在指定时间段内存在时间冲突的预约数量
-     * 
-     * @param roomName 房间名称
-     * @param startTime 开始时间
-     * @param endTime 结束时间
-     * @return 时间冲突的预约数量
-     */
-    public int countConflictingAppointments(@Param("roomName") String roomName, 
-                                           @Param("startTime") Date startTime, 
-                                           @Param("endTime") Date endTime);
+
 }

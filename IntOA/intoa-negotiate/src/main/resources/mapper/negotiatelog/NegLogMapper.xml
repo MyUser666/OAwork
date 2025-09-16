@@ -28,6 +28,14 @@
         select log_id, log_room_name, title, log_nick_name, log_tea_name, log_tea_num, client_name, client_contact, case_reference, start_time, end_time, status, create_by, create_time, update_by, update_time, remark from oa_neg_log
     </sql>
 
+    <select id="selectNegLogListByRoomAndTime" resultMap="NegLogResult">
+        <include refid="selectNegLogVo"/>
+        WHERE log_room_name = #{roomName}
+        AND status IN ('0', '1', '2') 
+        AND start_time &lt; #{endTime} 
+        AND end_time &gt; #{startTime}
+    </select>
+    
     <select id="selectNegLogList" parameterType="NegLog" resultMap="NegLogResult">
         <include refid="selectNegLogVo"/>
         <where>
@@ -85,15 +93,6 @@
             <if test="remark != null">#{remark},</if>
         </trim>
     </insert>
-
-    <select id="countConflictingAppointments" resultType="int">
-        SELECT COUNT(*) 
-        FROM oa_neg_log 
-        WHERE log_room_name = #{roomName}
-        AND status IN ('0', '1', '2') 
-        AND start_time &lt; #{endTime} 
-        AND end_time &gt; #{startTime}
-    </select>
 
     <update id="updateNegLog" parameterType="NegLog">
         update oa_neg_log
