@@ -41,44 +41,6 @@ public class RoomAvailabilityServiceImpl implements IRoomAvailabilityService {
     private RedisCache redisCache;
 
     /**
-     * 检查房间在指定时间段内的可用性
-     * <p>
-     * 综合考虑房间状态（status=0表示可用）和时间冲突情况，判断房间是否可用。
-     * 时间冲突检测考虑了房间的缓冲时间设置。
-     * </p>
-     *
-     * @param roomName  房间名称
-     * @param startTime 开始时间
-     * @param endTime   结束时间
-     * @return 房间可用性DTO
-     */
-    @Override
-    public RoomAvailabilityDTO checkRoomAvailability(String roomName, Date startTime, Date endTime) {
-        // 参数验证
-        validateParameters(startTime, endTime);
-        
-        // 查询房间信息
-        NegRoom room = getRoomFromCacheOrDB(roomName);
-        if (room == null) {
-            return new RoomAvailabilityDTO(null, false, "房间不存在");
-        }
-
-        // 检查房间状态是否为可用（status=0）
-        if (!"0".equals(room.getStatus())) {
-            return new RoomAvailabilityDTO(room, false, "房间状态不可用");
-        }
-
-        // 检查时间冲突（考虑缓冲时间）
-        boolean hasConflict = hasTimeConflict(room, startTime, endTime, null);
-        if (hasConflict) {
-            return new RoomAvailabilityDTO(room, false, "时间段内存在预约冲突");
-        }
-
-        // 房间可用
-        return new RoomAvailabilityDTO(room, true, null);
-    }
-
-    /**
      * 验证输入参数
      *
      * @param startTime 开始时间
@@ -227,7 +189,7 @@ public class RoomAvailabilityServiceImpl implements IRoomAvailabilityService {
 
         // 检查每个房间的可用性
         return allRooms.parallelStream() // 使用并行流提高处理速度
-                .map(room -> checkRoomAvailabilityWithAppointments(room, startTime, endTime, appointmentMap.getOrDefault(room.getRoomName(), List.of())))
+                .map(room -> checkRoomAvailability(room.getRoomName(), startTime, endTime, appointmentMap.getOrDefault(room.getRoomName(), List.of())))
                 .collect(Collectors.toList());
     }
 
@@ -269,13 +231,22 @@ public class RoomAvailabilityServiceImpl implements IRoomAvailabilityService {
     /**
      * 根据已获取的预约信息检查房间可用性
      *
-     * @param room 房间对象
+     * @param roomName 房间名称
      * @param startTime 开始时间
      * @param endTime 结束时间
      * @param existingAppointments 已存在的预约记录
      * @return 房间可用性DTO
      */
-    private RoomAvailabilityDTO checkRoomAvailabilityWithAppointments(NegRoom room, Date startTime, Date endTime, List<NegLog> existingAppointments) {
+    private RoomAvailabilityDTO checkRoomAvailability(String roomName, Date startTime, Date endTime, List<NegLog> existingAppointments) {
+        // 参数验证
+        validateParameters(startTime, endTime);
+        
+        // 查询房间信息
+        NegRoom room = getRoomFromCacheOrDB(roomName);
+        if (room == null) {
+            return new RoomAvailabilityDTO(null, false, "房间不存在");
+        }
+        
         // 检查房间状态是否为可用（status=0）
         if (!"0".equals(room.getStatus())) {
             return new RoomAvailabilityDTO(room, false, "房间状态不可用");
