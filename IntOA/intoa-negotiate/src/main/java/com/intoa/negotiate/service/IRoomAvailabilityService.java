@@ -16,19 +16,6 @@ import java.util.List;
  * @date 2025-09-15
  */
 public interface IRoomAvailabilityService {
-    
-    /**
-     * 检查房间在指定时间段内的可用性
-     * <p>
-     * 综合考虑房间状态（status=0表示可用）和时间冲突情况，判断房间是否可用。
-     * </p>
-     *
-     * @param roomName  房间名称
-     * @param startTime 开始时间
-     * @param endTime   结束时间
-     * @return 房间可用性DTO
-     */
-    RoomAvailabilityDTO checkRoomAvailability(String roomName, Date startTime, Date endTime);
 
     /**
      * 获取指定时间段内所有房间的可用性列表
