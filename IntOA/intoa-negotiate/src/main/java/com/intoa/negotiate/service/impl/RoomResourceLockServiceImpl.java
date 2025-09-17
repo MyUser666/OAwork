@@ -1,7 +1,7 @@
 package com.intoa.negotiate.service.impl;
 
+import com.intoa.common.core.redis.RedisCache;
 import com.intoa.negotiate.service.IRoomResourceLockService;
-import com.intoa.negotiate.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ public class RoomResourceLockServiceImpl implements IRoomResourceLockService {
      * Redis工具类实例，用于操作Redis缓存
      */
     @Autowired
-    private RedisUtil redisUtil;
+    private RedisCache redisCache;
 
     /**
      * Redis房间锁定键前缀
@@ -74,16 +74,16 @@ public class RoomResourceLockServiceImpl implements IRoomResourceLockService {
             String lockInfo = requestId + ":" + TEMP_LOCK_STATUS + ":" + expireTime;
 
             // 设置哈希字段
-            redisUtil.setHash(key, field, lockInfo);
+            redisCache.setCacheMapValue(key, field, lockInfo);
             
             // 设置过期时间
-            redisUtil.expire(key, expireSeconds, TimeUnit.SECONDS);
+            redisCache.expire(key, expireSeconds, TimeUnit.SECONDS);
             
             // 记录临时锁定信息，用于超时检查
             String tempLockKey = TEMP_LOCK_PREFIX + requestId;
             String tempLockValue = key + ":" + field;
-            redisUtil.setString(tempLockKey, tempLockValue);
-            redisUtil.expire(tempLockKey, expireSeconds, TimeUnit.SECONDS);
+            redisCache.setCacheObject(tempLockKey, tempLockValue);
+            redisCache.expire(tempLockKey, expireSeconds, TimeUnit.SECONDS);
             
             // 更新房间状态到Redis
             updateRoomStatusInRedis(roomName, date);
@@ -124,10 +124,10 @@ public class RoomResourceLockServiceImpl implements IRoomResourceLockService {
             String lockInfo = logId + ":" + LOCK_STATUS + ":" + expireTime;
 
             // 设置哈希字段
-            redisUtil.setHash(key, field, lockInfo);
+            redisCache.setCacheMapValue(key, field, lockInfo);
             
             // 设置过期时间
-            redisUtil.expire(key, 24, TimeUnit.HOURS);
+            redisCache.expire(key, 24, TimeUnit.HOURS);
             
             // 更新房间状态到Redis
             updateRoomStatusInRedis(roomName, date);
@@ -163,7 +163,7 @@ public class RoomResourceLockServiceImpl implements IRoomResourceLockService {
             String field = startTimeStr + "-" + endTimeStr;
 
             // 删除哈希字段
-            redisUtil.deleteHashField(key, field);
+            redisCache.deleteCacheMapValue(key, field);
             
             // 更新房间状态到Redis
             updateRoomStatusInRedis(roomName, date);
@@ -199,7 +199,7 @@ public class RoomResourceLockServiceImpl implements IRoomResourceLockService {
             String field = startTimeStr + "-" + endTimeStr;
 
             // 检查是否存在锁定信息
-            return redisUtil.getHash(key, field) != null;
+            return redisCache.getCacheMapValue(key, field) != null;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -219,7 +219,7 @@ public class RoomResourceLockServiceImpl implements IRoomResourceLockService {
     public boolean isTempLockValid(String requestId) {
         try {
             String tempLockKey = TEMP_LOCK_PREFIX + requestId;
-            return redisUtil.getString(tempLockKey) != null;
+            return redisCache.getCacheObject(tempLockKey) != null;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -245,7 +245,7 @@ public class RoomResourceLockServiceImpl implements IRoomResourceLockService {
             String key = "room:status:" + roomName + ":" + dateStr;
 
             // 设置过期时间，24小时后过期
-            redisUtil.expire(key, 24, TimeUnit.HOURS);
+            redisCache.expire(key, 24, TimeUnit.HOURS);
         } catch (Exception e) {
             e.printStackTrace();
         }
