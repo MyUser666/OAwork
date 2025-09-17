@@ -1,5 +1,6 @@
 package com.intoa.negotiate.service.impl;
 
+import com.intoa.common.core.redis.RedisCache;
 import com.intoa.negotiate.domain.NegLog;
 import com.intoa.negotiate.domain.NegRoom;
 import com.intoa.negotiate.domain.dto.RoomAvailabilityDTO;
@@ -8,10 +9,14 @@ import com.intoa.negotiate.mapper.NegRoomMapper;
 import com.intoa.negotiate.service.IRoomAvailabilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +36,9 @@ public class RoomAvailabilityServiceImpl implements IRoomAvailabilityService {
 
     @Autowired
     private NegLogMapper logMapper;
+    
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 检查房间在指定时间段内的可用性
@@ -46,8 +54,11 @@ public class RoomAvailabilityServiceImpl implements IRoomAvailabilityService {
      */
     @Override
     public RoomAvailabilityDTO checkRoomAvailability(String roomName, Date startTime, Date endTime) {
+        // 参数验证
+        validateParameters(startTime, endTime);
+        
         // 查询房间信息
-        NegRoom room = roomMapper.selectNegRoomByRoomName(roomName);
+        NegRoom room = getRoomFromCacheOrDB(roomName);
         if (room == null) {
             return new RoomAvailabilityDTO(null, false, "房间不存在");
         }
@@ -65,6 +76,40 @@ public class RoomAvailabilityServiceImpl implements IRoomAvailabilityService {
 
         // 房间可用
         return new RoomAvailabilityDTO(room, true, null);
+    }
+
+    /**
+     * 验证输入参数
+     *
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     */
+    private void validateParameters(Date startTime, Date endTime) {
+        Assert.notNull(startTime, "开始时间不能为空");
+        Assert.notNull(endTime, "结束时间不能为空");
+        Assert.isTrue(startTime.before(endTime), "开始时间必须早于结束时间");
+    }
+
+    /**
+     * 从缓存或数据库获取房间信息
+     *
+     * @param roomName 房间名称
+     * @return 房间对象
+     */
+    private NegRoom getRoomFromCacheOrDB(String roomName) {
+        String redisKey = "room:info:" + roomName;
+        NegRoom room = redisCache.getCacheObject(redisKey);
+        
+        if (room != null) {
+            return room;
+        }
+        
+        room = roomMapper.selectNegRoomByRoomName(roomName);
+        if (room != null) {
+            // 将房间信息缓存到Redis中，缓存1小时
+            redisCache.setCacheObject(redisKey, room, 1, TimeUnit.HOURS);
+        }
+        return room;
     }
 
     /**
@@ -86,8 +131,7 @@ public class RoomAvailabilityServiceImpl implements IRoomAvailabilityService {
         LocalTime bufferTime = room.getBufferTime() != null ? room.getBufferTime() : LocalTime.of(0, 0);
         
         // 查询该房间在指定时间范围内的所有预约记录
-        List<NegLog> existingAppointments = logMapper.selectNegLogListByRoomAndTime(
-                room.getRoomName(), startTime, endTime);
+        List<NegLog> existingAppointments = getAppointmentFromCacheOrDB(room.getRoomName(), startTime, endTime);
         
         // 遍历所有预约记录，检查是否存在时间冲突
         for (NegLog appointment : existingAppointments) {
@@ -99,6 +143,31 @@ public class RoomAvailabilityServiceImpl implements IRoomAvailabilityService {
         }
         
         return false;
+    }
+
+    /**
+     * 从缓存或数据库获取预约信息
+     *
+     * @param roomName 房间名称
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 预约记录列表
+     */
+    private List<NegLog> getAppointmentFromCacheOrDB(String roomName, Date startTime, Date endTime) {
+        String redisKey = "appointments:" + roomName + ":" + startTime.getTime() + ":" + endTime.getTime();
+        List<NegLog> appointments = redisCache.getCacheList(redisKey);
+        
+        if (appointments != null && !appointments.isEmpty()) {
+            return appointments;
+        }
+        
+        appointments = logMapper.selectNegLogListByRoomAndTime(roomName, startTime, endTime);
+        if (appointments != null && !appointments.isEmpty()) {
+            // 缓存15分钟
+            redisCache.setCacheList(redisKey, appointments);
+            redisCache.expire(redisKey, 15, TimeUnit.MINUTES);
+        }
+        return appointments;
     }
 
     /**
@@ -135,7 +204,7 @@ public class RoomAvailabilityServiceImpl implements IRoomAvailabilityService {
     /**
      * 获取指定时间段内所有房间的可用性列表
      * <p>
-     * 遍历所有房间，检查每个房间在指定时间段内的可用性。
+     * 优化后的实现，先一次性获取所有房间信息，然后批量查询相关预约记录，提高查询效率
      * </p>
      *
      * @param startTime 开始时间
@@ -144,19 +213,110 @@ public class RoomAvailabilityServiceImpl implements IRoomAvailabilityService {
      */
     @Override
     public List<RoomAvailabilityDTO> getAllRoomsAvailability(Date startTime, Date endTime) {
+        // 参数验证
+        validateParameters(startTime, endTime);
+        
         // 查询所有房间
         List<NegRoom> allRooms = roomMapper.selectNegRoomList(new NegRoom());
 
+        // 批量查询所有房间在指定时间段内的预约记录
+        Map<String, List<NegLog>> appointmentMap = getBatchAppointments(allRooms, startTime, endTime);
+
         // 检查每个房间的可用性
-        return allRooms.stream()
-                .map(room -> checkRoomAvailability(room.getRoomName(), startTime, endTime))
+        return allRooms.parallelStream() // 使用并行流提高处理速度
+                .map(room -> checkRoomAvailabilityWithAppointments(room, startTime, endTime, appointmentMap.getOrDefault(room.getRoomName(), List.of())))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 批量查询所有房间在指定时间段内的预约记录
+     *
+     * @param rooms 房间列表
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 房间预约记录映射
+     */
+    private Map<String, List<NegLog>> getBatchAppointments(List<NegRoom> rooms, Date startTime, Date endTime) {
+        List<String> roomNames = rooms.stream().map(NegRoom::getRoomName).collect(Collectors.toList());
+        
+        // 构建Redis缓存键
+        String redisKey = "batch_appointments:" + roomNames.hashCode() + ":" + startTime.getTime() + ":" + endTime.getTime();
+        
+        // 尝试从缓存获取
+        Map<String, List<NegLog>> appointmentMap = redisCache.getCacheObject(redisKey);
+        if (appointmentMap != null) {
+            return appointmentMap;
+        }
+        
+        // 缓存未命中，从数据库获取
+        appointmentMap = new ConcurrentHashMap<>();
+        
+        // 查询每个房间的预约记录（使用传统循环避免并发修改问题）
+        for (NegRoom room : rooms) {
+            List<NegLog> appointments = logMapper.selectNegLogListByRoomAndTime(room.getRoomName(), startTime, endTime);
+            appointmentMap.put(room.getRoomName(), appointments);
+        }
+        
+        // 将结果缓存30分钟
+        redisCache.setCacheObject(redisKey, appointmentMap, 30, TimeUnit.MINUTES);
+        
+        return appointmentMap;
+    }
+
+    /**
+     * 根据已获取的预约信息检查房间可用性
+     *
+     * @param room 房间对象
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param existingAppointments 已存在的预约记录
+     * @return 房间可用性DTO
+     */
+    private RoomAvailabilityDTO checkRoomAvailabilityWithAppointments(NegRoom room, Date startTime, Date endTime, List<NegLog> existingAppointments) {
+        // 检查房间状态是否为可用（status=0）
+        if (!"0".equals(room.getStatus())) {
+            return new RoomAvailabilityDTO(room, false, "房间状态不可用");
+        }
+
+        // 检查时间冲突（考虑缓冲时间）
+        boolean hasConflict = hasTimeConflictWithAppointments(room, startTime, endTime, existingAppointments);
+        if (hasConflict) {
+            return new RoomAvailabilityDTO(room, false, "时间段内存在预约冲突");
+        }
+
+        // 房间可用
+        return new RoomAvailabilityDTO(room, true, null);
+    }
+
+    /**
+     * 根据已获取的预约信息检查时间冲突
+     *
+     * @param room 房间对象
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param existingAppointments 已存在的预约记录
+     * @return 是否存在时间冲突
+     */
+    private boolean hasTimeConflictWithAppointments(NegRoom room, Date startTime, Date endTime, List<NegLog> existingAppointments) {
+        // 获取房间缓冲时间，默认为0（表示无缓冲时间）
+        LocalTime bufferTime = room.getBufferTime() != null ? room.getBufferTime() : LocalTime.of(0, 0);
+
+        // 遍历所有预约记录，检查是否存在时间冲突
+        for (NegLog appointment : existingAppointments) {
+            // 检查时间是否冲突（考虑缓冲时间）
+            if (isTimeOverlapping(startTime, endTime, bufferTime,
+                    appointment.getStartTime(), appointment.getEndTime(), bufferTime)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
      * 获取指定时间段内可用的房间列表
      * <p>
-     * 仅返回在指定时间段内可用的房间列表。
+     * 仅返回在指定时间段内可用的房间列表，使用优化后的批量查询方法提高效率
      * </p>
      *
      * @param startTime 开始时间
@@ -165,6 +325,9 @@ public class RoomAvailabilityServiceImpl implements IRoomAvailabilityService {
      */
     @Override
     public List<RoomAvailabilityDTO> getAvailableRooms(Date startTime, Date endTime) {
+        // 参数验证
+        validateParameters(startTime, endTime);
+        
         // 获取所有房间的可用性
         List<RoomAvailabilityDTO> allRoomsAvailability = getAllRoomsAvailability(startTime, endTime);
 
